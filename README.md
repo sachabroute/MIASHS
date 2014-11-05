@@ -1,4 +1,4 @@
 MIASHS
 ======
 
-mega insanely Awesome Super Hot Solitaire
+Mega Insanely Awesome Super Hot Solitaire
