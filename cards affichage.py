@@ -15,13 +15,11 @@ os.chdir("images/cartes/")
 liste_images_brutes = os.listdir()
 lignes = 4
 colonnes = int(len(liste_images_brutes) / lignes)
-print(liste_images_brutes)
 liste_images = [[0 for x in range(colonnes)] for y in range(lignes)]
 for y in range(lignes):
     for x in range(colonnes):
         liste_images[y][x] = pygame.image.load(liste_images_brutes[(y * 13) + x]).convert_alpha()
         print((y*13)+x)
-print(liste_images)
 os.chdir("../fond")
 fond = pygame.image.load("fond.png")
 #### end load images (wouaaah c'est super court t'as vu!??)
