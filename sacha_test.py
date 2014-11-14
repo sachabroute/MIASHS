@@ -1,10 +1,10 @@
 from random import *
 
 ## D(diamonds) H(hearts) S(spades) C(clubs)
-cartes = ["1 d","2 d","3 d","4 d","5 d","6 d","7 d","8 d","9 d","10 d","11 d","12 d","13 d",
-          "1 h","2 h","3 h","4 h","5 h","6 h","7 h","8 h","9 h","10 h","11 h","12 h","13 h",
-          "1 s","2 s","3 s","4 s","5 s","6 s","7 s","8 s","9 s","10 s","11 s","12 s","13 s",
-          "1 c","2 c","3 c","4 c","5 c","6 c","7 c","8 c","9 c","10 c","11 c","12 c","13 c"]
+cartes = ["1 D","2 D","3 D","4 D","5 D","6 D","7 D","8 D","9 D","10 D","11 D","12 D","13 D",
+          "1 H","2 H","3 H","4 H","5 H","6 H","7 H","8 H","9 H","10 H","11 H","12 H","13 H",
+          "1 S","2 S","3 S","4 S","5 S","6 S","7 S","8 S","9 S","10 S","11 S","12 S","13 S",
+          "1 C","2 C","3 C","4 C","5 C","6 C","7 C","8 C","9 C","10 C","11 C","12 C","13 C"]
 
 ## le jeux de cartes aleatoire est genere dans un tableau 2D avec des espaces a la fin
 shuffled = [[" " for i in range(14)] for i in range(4)]
