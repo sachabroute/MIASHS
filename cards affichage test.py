@@ -104,7 +104,7 @@ def check_move(shuffled, move_from, move_to):
         if (type_carte_depart == type_carte_compare) and (num_carte_depart == num_carte_compare + 1):
             valid = True
 
-    elif move_to[0] == 0 and num_carte_depart == 1:
+    elif move_to[0] == 0 and num_carte_depart == 1 and shuffled[move_to[1]][move_to[0]] == "V00":
         valid = True
 
     if valid == True:
