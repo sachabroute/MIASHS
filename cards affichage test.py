@@ -2,6 +2,7 @@ import pygame
 from pygame.locals import *
 import sys
 import os
+import time
 from random import *
 
 
@@ -42,6 +43,7 @@ def main():
     coord_depart = (-1,-1)
     select_dest = False
     coord_dest = (-1,-1)
+    check = False
 
 
     while True:        
@@ -72,15 +74,19 @@ def main():
 
         ## affiche contour carte (+ 1 pour colonnes pour la colonne vide du depart)
         if select_depart == True:
-            pygame.draw.rect(fenetre, (255, 0, 0), ((coord_depart[0] * 80 + 30 , coord_depart[1] * 118 + 30), (75 , 113)), 3)
+            pygame.draw.rect(fenetre, (0, 0, 255), ((coord_depart[0] * 80 + 30 , coord_depart[1] * 118 + 30), (75 , 113)), 3)
 
         ## affiche contour carte (+ 1 pour colonnes pour la colonne vide du depart)
         if select_dest == True:
-            pygame.draw.rect(fenetre, (0, 255, 0), ((coord_dest[0] * 80 + 30 , coord_dest[1] * 118 + 30), (75 , 113)), 3)
-            shuffled = check_move(shuffled, coord_depart, coord_dest)
-            select_depart,select_dest = False, False
+            pygame.draw.rect(fenetre, (255, 255, 0), ((coord_dest[0] * 80 + 30 , coord_dest[1] * 118 + 30), (75 , 113)), 3)
+            check = True
 
         pygame.display.flip()
+
+        if check == True:
+            shuffled = check_move(shuffled, coord_depart, coord_dest)
+            select_depart,select_dest,check = False, False, False
+            time.sleep(0.5)
         
         ##resest variables
         mouse_coord = (-1,-1)
@@ -96,20 +102,17 @@ def check_move(shuffled, move_from, move_to):
     num_carte_compare = int(shuffled[move_to[1]][move_to[0] - 1][1:3])
 
     if move_to[0] > 0 and shuffled[move_to[1]][move_to[0]] == "V00":
-        print('ok1')
         if (type_carte_depart == type_carte_compare) and (num_carte_depart == num_carte_compare + 1):
             valid = True
 
-    elif move_to[0] == 0 and num_carte_depart == "1":
+    elif move_to[0] == 0 and num_carte_depart == 1:
         valid = True
 
     if valid == True:
         shuffled[move_to[1]][move_to[0]] = shuffled[move_from[1]][move_from[0]]
         shuffled[move_from[1]][move_from[0]] = "V00"
-        print("good!")
         return(shuffled)
     else:
-        print("bad!")
         return(shuffled)
 
 
