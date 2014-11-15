@@ -11,18 +11,22 @@ fenetre = pygame.display.set_mode((1175, 750))
 
 
 #### load images
-os.chdir("images/cartes/")
+os.chdir("images/jeux_cartes/simpsons")
 liste_images_brutes = os.listdir()
+nombre_cartes = int(len(liste_images_brutes))
 lignes = 4
-colonnes = int(len(liste_images_brutes) / lignes)
-liste_images = [[0 for x in range(colonnes)] for y in range(lignes)]
-for y in range(lignes):
-    for x in range(colonnes):
-        liste_images[y][x] = pygame.image.load(liste_images_brutes[(y * 13) + x]).convert_alpha()
-        print((y*13)+x)
-os.chdir("../fond")
+colonnes = int(nombre_cartes / lignes)
+liste_images = [[0 for i in range(2)] for i in range(nombre_cartes)]
+for i in range(nombre_cartes):
+    liste_images[i][0] = liste_images_brutes[i]
+    liste_images[i][1] = pygame.image.load(liste_images_brutes[i]).convert_alpha()
+os.chdir("../../fond")
 fond = pygame.image.load("fond.png")
 #### end load images (wouaaah c'est super court t'as vu!??)
+
+## melange de cartes
+shuffle(liste_images)
+print(liste_images)
 
 mouse_coord = (-1,-1)
 mouse_X, mouse_Y = 0,0
@@ -60,7 +64,7 @@ while True:
     ## affiche cartes
     for y in range(lignes):
         for x in range(colonnes):
-                fenetre.blit(liste_images[y][x], (x * 80 + 30 , y * 118 + 30))
+                fenetre.blit(liste_images[y * 13 + x][1], (x * 80 + 30 , y * 118 + 30))
 
     ## affiche contour carte (+ 1 pour colonnes pour la colonne vide du depart)
     if select_depart == True:
