@@ -15,7 +15,6 @@ def main():
 
     #### load images
     fond = pygame.image.load("images/fond/fond.png")
-    #os.chdir("images/jeux_cartes/simpsons")
     liste_images_brutes = os.listdir("images/jeux_cartes/simpsons")
     nombre_cartes = int(len(liste_images_brutes))
     lignes = 4
