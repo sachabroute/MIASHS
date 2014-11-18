@@ -11,7 +11,7 @@ fenetre = pygame.display.set_mode((1175, 750))
 
 
 #### load images
-os.chdir("images/jeux_cartes/simpsons")
+os.chdir("images/simpsons/cartes/")
 liste_images_brutes = os.listdir()
 nombre_cartes = int(len(liste_images_brutes))
 lignes = 4

@@ -15,14 +15,14 @@ def main():
 
     #### load images
     fond = pygame.image.load("images/fond/fond.png")
-    liste_images_brutes = os.listdir("images/simpsons/cartes/")
+    liste_images_brutes = os.listdir("images/pokemon/cartes/")
     nombre_cartes = int(len(liste_images_brutes))
     lignes = 4
     colonnes = int(nombre_cartes / lignes)
     cartes = {}
     for i in range(nombre_cartes):
         indice = liste_images_brutes[i].split(".")[0]
-        cartes["%s" %(indice)] = pygame.image.load("images/simpsons/cartes/"+liste_images_brutes[i]).convert_alpha()
+        cartes["%s" %(indice)] = pygame.image.load("images/pokemon/cartes/"+liste_images_brutes[i]).convert_alpha()
     #### end load images (wouaaah c'est super court t'as vu!??)
 
     ## creation d'une liste de base, et melange de cartes
@@ -69,7 +69,7 @@ def main():
         ## affiche cartes
         for y in range(lignes):
             for x in range(colonnes + 1):
-                fenetre.blit(cartes[shuffled[y][x]], (x * 80 + 30 , y * 118 + 30))
+                fenetre.blit(cartes[shuffled[y][x]], (x * 80 + 30 , y * 30 + 30))
 
         ## affiche contour carte (+ 1 pour colonnes pour la colonne vide du depart)
         if select_depart == True:
