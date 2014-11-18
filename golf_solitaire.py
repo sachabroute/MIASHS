@@ -17,8 +17,8 @@ def main():
     fond = pygame.image.load("images/fond/fond.png")
     liste_images_brutes = os.listdir("images/pokemon/cartes/")
     nombre_cartes = int(len(liste_images_brutes))
-    lignes = 4
-    colonnes = int(nombre_cartes / lignes)
+    lignes = 5   ## a voir si on peut changer ces valeurs pour ce jeu
+    colonnes = 7 ## a voir si on peut changer ces valeurs pour ce jeu
     cartes = {}
     for i in range(nombre_cartes):
         indice = liste_images_brutes[i].split(".")[0]
@@ -28,21 +28,21 @@ def main():
     ## creation d'une liste de base, et melange de cartes
     liste_cartes = [name for name in cartes]
     shuffle(liste_cartes)
-    shuffled = [liste_cartes[x:x+colonnes] for x in range(0, len(liste_cartes), colonnes)]
-    
-    ## rajout de cartes vides a la fin des listes
+    tableau_cartes = [liste_cartes[x:x+lignes] for x in range(0, colonnes * lignes, lignes)]
+    print(tableau_cartes)
+    pioche_cartes = liste_cartes[colonnes * lignes:]
+    poubelle_cartes = []
+
+    ## le dos des cartes (pour la pioche), carte vide
+    dos = pygame.image.load("images/pokemon/dos/dos.png").convert_alpha()
     cartes["V00"] = pygame.image.load("images/carte_vide/V00.png").convert_alpha()
-    for i in range(lignes):
-        shuffled[i].append("V00")
-                
+    carte_pioche = "V00"
+    
 
     mouse_coord = (-1,-1)
-    mouse_X, mouse_Y = 0,0
-    select_depart = False
-    coord_depart = (-1,-1)
-    select_dest = False
-    coord_dest = (-1,-1)
-    check = False
+    select_card = False
+    coord_card = (-1,-1)
+    pioche = False
 
 
     while True:        
@@ -55,64 +55,60 @@ def main():
             if event.type == MOUSEBUTTONDOWN:
                 mouse_coord = pygame.mouse.get_pos()
                 ## conversion coordonnées brutes en coordonnées tableau
-                mouse_coord = (mouse_coord[0] - 30) // 80, (mouse_coord[1] - 30) // 118
-                if select_depart == False and 0 <= mouse_coord[0] < colonnes + 1 and 0 <= mouse_coord[1] < lignes:
-                    coord_depart = mouse_coord
-                    select_depart = True
-                elif select_dest == False and 0 <= mouse_coord[0] < colonnes + 1 and 0 <= mouse_coord[1] < lignes:
-                    coord_dest = mouse_coord
-                    select_dest = True
+                if 80 <= mouse_coord[0] < colonnes * 120 + 80 and (lignes - 1) * 50 + 30 <= mouse_coord[1] < (lignes - 1) * 50 + 30 + 118:
+                    coord_card = (mouse_coord[0] - 80) // 120, (mouse_coord[1] - 30) // 50
+                    if coord_card[1] > 4:
+                        coord_card = coord_card[0], 4
+                    select_card = True
+                elif 80 <= mouse_coord[0] < len(pioche_cartes) * 5 + 80 + 70 and 400 <= mouse_coord[1] < 400 + 118:
+                    pioche = True
 
         ## affiche fond
         fenetre.blit(fond, (0,0))
         
         ## affiche cartes
-        for y in range(lignes):
-            for x in range(colonnes + 1):
-                fenetre.blit(cartes[shuffled[y][x]], (x * 80 + 30 , y * 30 + 30))
+        for x in range(colonnes):
+            for y in range(lignes):
+                fenetre.blit(cartes[tableau_cartes[x][y]], (x * 120 + 80, y * 50 + 30))
+
+        ## affiche pioche
+        for i in range(len(pioche_cartes)):
+            fenetre.blit(dos, (80 + i * 5, 400))
 
         ## affiche contour carte (+ 1 pour colonnes pour la colonne vide du depart)
-        if select_depart == True:
-            pygame.draw.rect(fenetre, (0, 0, 255), ((coord_depart[0] * 80 + 30 , coord_depart[1] * 118 + 30), (75 , 113)), 3)
+        if select_card == True:
+            pygame.draw.rect(fenetre, (0, 255, 0), ((coord_card[0] * 120 + 80 , coord_card[1] * 50 + 30), (75 , 113)), 3)
 
-        ## affiche contour carte (+ 1 pour colonnes pour la colonne vide du depart)
-        if select_dest == True:
-            pygame.draw.rect(fenetre, (255, 255, 0), ((coord_dest[0] * 80 + 30 , coord_dest[1] * 118 + 30), (75 , 113)), 3)
-            check = True
+
+        if pioche:
+            carte_pioche = pioche_cartes.pop()
+            pioche = False
+
+        fenetre.blit(cartes[carte_pioche], (300, 400))
 
         pygame.display.flip()
 
-        if check == True:
-            shuffled = check_move(shuffled, coord_depart, coord_dest)
-            select_depart,select_dest,check = False, False, False
+        if select_card:
+            tableau_cartes, carte_pioche = check_move(tableau_cartes, carte_pioche, coord_card)
+            select_card = False
             time.sleep(0.5)
         
         ##resest variables
         mouse_coord = (-1,-1)
 
         
-def check_move(shuffled, move_from, move_to):
+def check_move(tableau_cartes, carte_pioche, coord_card):
+    print(coord_card)
 
     valid = False
+    num_carte = int(tableau_cartes[coord_card[1]][coord_card[0]][1:3])
+    num_carte_pioche = int(carte_pioche[1:3])
+
+    if num_carte == num_carte_pioche + 1 or num_carte == num_carte_pioche - 1:
+        carte_pioche = tableau_cartes[coord_card[0]][coord_card[1]]
+        tableau_cartes[coord_card[0]][coord_card[1]] = "V00"
     
-    type_carte_depart = shuffled[move_from[1]][move_from[0]][0]
-    num_carte_depart = int(shuffled[move_from[1]][move_from[0]][1:3])
-    type_carte_compare = shuffled[move_to[1]][move_to[0] - 1][0]
-    num_carte_compare = int(shuffled[move_to[1]][move_to[0] - 1][1:3])
-
-    if move_to[0] > 0 and shuffled[move_to[1]][move_to[0]] == "V00":
-        if (type_carte_depart == type_carte_compare) and (num_carte_depart == num_carte_compare + 1):
-            valid = True
-
-    elif move_to[0] == 0 and num_carte_depart == 1 and shuffled[move_to[1]][move_to[0]] == "V00":
-        valid = True
-
-    if valid == True:
-        shuffled[move_to[1]][move_to[0]] = shuffled[move_from[1]][move_from[0]]
-        shuffled[move_from[1]][move_from[0]] = "V00"
-        return(shuffled)
-    else:
-        return(shuffled)
+    return(tableau_cartes, carte_pioche)
 
 
 # ==============================================================================
