@@ -16,31 +16,33 @@ def main():
     #### load images
     fond = pygame.image.load("images/fond/fond.png")
     liste_images_brutes = os.listdir("images/simpsons/cartes/")
+    
     nombre_cartes = int(len(liste_images_brutes))
     lignes = 4
     colonnes = int(nombre_cartes / lignes)
-    cartes = {}
+    cartes = {} ## initialisation biblioteque vide
+    
     for i in range(nombre_cartes):
-        indice = liste_images_brutes[i].split(".")[0]
+        indice = liste_images_brutes[i].split(".")[0] ## correspond au nom de chaque carte. on split pour enlever le '.png', on se retrouve avec 'C01', 'C02', etc...
         cartes["%s" %(indice)] = pygame.image.load("images/simpsons/cartes/"+liste_images_brutes[i]).convert_alpha()
     #### end load images (wouaaah c'est super court t'as vu!??)
 
     ## creation d'une liste de base, et melange de cartes
-    liste_cartes = [name for name in cartes]
+    liste_cartes = [name for name in cartes] ## prends chaque nom de cartes dans la biblioteque
     shuffle(liste_cartes)
-    shuffled = [liste_cartes[x:x+colonnes] for x in range(0, len(liste_cartes), colonnes)]
+    shuffled = [liste_cartes[x:x+colonnes] for x in range(0, len(liste_cartes), colonnes)] ## cree une liste deux dimensions (lignes * colonnes) avec comme valeur les valeurs de liste_cartes
     
-    ## rajout de cartes vides a la fin des listes
+    ## rajout de cartes vides a la fin des listes.
     cartes["V00"] = pygame.image.load("images/carte_vide/V00.png").convert_alpha()
-    for i in range(lignes):
-        shuffled[i].append("V00")
+    for i in range(lignes): ## on rajoute la carte vide à la fin de chaque ligne!
+        shuffled[i].append("V00") ## On la rajoute ici parce que si on la rajoutais avant, on aurais une carte vide qq part dans le tableau!
                 
 
     mouse_coord = (-1,-1)
     mouse_X, mouse_Y = 0,0
-    select_depart = False
+    select_depart = False ## variable si la carte de depart a été selectionnée
     coord_depart = (-1,-1)
-    select_dest = False
+    select_dest = False ## variable si la carte de destination a été selectionnée
     coord_dest = (-1,-1)
     check = False
 
@@ -56,10 +58,10 @@ def main():
                 mouse_coord = pygame.mouse.get_pos()
                 ## conversion coordonnées brutes en coordonnées tableau
                 mouse_coord = (mouse_coord[0] - 30) // 80, (mouse_coord[1] - 30) // 118
-                if select_depart == False and 0 <= mouse_coord[0] < colonnes + 1 and 0 <= mouse_coord[1] < lignes:
+                if select_depart == False and 0 <= mouse_coord[0] < colonnes + 1 and 0 <= mouse_coord[1] < lignes: ## pour la carte de depart
                     coord_depart = mouse_coord
                     select_depart = True
-                elif select_dest == False and 0 <= mouse_coord[0] < colonnes + 1 and 0 <= mouse_coord[1] < lignes:
+                elif select_dest == False and 0 <= mouse_coord[0] < colonnes + 1 and 0 <= mouse_coord[1] < lignes: ## pour la position de destination
                     coord_dest = mouse_coord
                     select_dest = True
 
@@ -68,24 +70,24 @@ def main():
         
         ## affiche cartes
         for y in range(lignes):
-            for x in range(colonnes + 1):
+            for x in range(colonnes + 1): # + 1 pour rajouter la carte vide à la fin
                 fenetre.blit(cartes[shuffled[y][x]], (x * 80 + 30 , y * 118 + 30))
 
-        ## affiche contour carte (+ 1 pour colonnes pour la colonne vide du depart)
-        if select_depart == True:
+        ## affiche contour carte depart
+        if select_depart:
             pygame.draw.rect(fenetre, (0, 0, 255), ((coord_depart[0] * 80 + 30 , coord_depart[1] * 118 + 30), (75 , 113)), 3)
 
-        ## affiche contour carte (+ 1 pour colonnes pour la colonne vide du depart)
-        if select_dest == True:
+        ## affiche contour emplacement dest
+        if select_dest:
             pygame.draw.rect(fenetre, (255, 255, 0), ((coord_dest[0] * 80 + 30 , coord_dest[1] * 118 + 30), (75 , 113)), 3)
             check = True
 
         pygame.display.flip()
 
-        if check == True:
+        if select_dest:
             shuffled = check_move(shuffled, coord_depart, coord_dest)
-            select_depart,select_dest,check = False, False, False
-            time.sleep(0.5)
+            select_depart,select_dest = False, False
+            time.sleep(0.5) ## pour qu'il y ait une ptite pause pour qu'on voit bien les couleurs des contours
         
         ##resest variables
         mouse_coord = (-1,-1)
@@ -97,22 +99,23 @@ def check_move(shuffled, move_from, move_to):
     
     type_carte_depart = shuffled[move_from[1]][move_from[0]][0]
     num_carte_depart = int(shuffled[move_from[1]][move_from[0]][1:3])
+
+    ## les variables compare correspondent à la carte juste avant l'emplacement d'arrivee dans une meme ligne
     type_carte_compare = shuffled[move_to[1]][move_to[0] - 1][0]
     num_carte_compare = int(shuffled[move_to[1]][move_to[0] - 1][1:3])
 
-    if move_to[0] > 0 and shuffled[move_to[1]][move_to[0]] == "V00":
-        if (type_carte_depart == type_carte_compare) and (num_carte_depart == num_carte_compare + 1):
+    if move_to[0] > 0 and shuffled[move_to[1]][move_to[0]] == "V00": ## si la destination est bien une carte vide et pas la première colonne
+        if (type_carte_depart == type_carte_compare) and (num_carte_depart == num_carte_compare + 1): ## verifie le type de carte et si la carte est bien supérieure d'1
             valid = True
 
-    elif move_to[0] == 0 and num_carte_depart == 1 and shuffled[move_to[1]][move_to[0]] == "V00":
+    elif move_to[0] == 0 and num_carte_depart == 1 and shuffled[move_to[1]][move_to[0]] == "V00": ## si la carte est un as et est déplacé vers la première colonne
         valid = True
 
     if valid == True:
         shuffled[move_to[1]][move_to[0]] = shuffled[move_from[1]][move_from[0]]
         shuffled[move_from[1]][move_from[0]] = "V00"
-        return(shuffled)
-    else:
-        return(shuffled)
+
+    return(shuffled)
 
 
 # ==============================================================================

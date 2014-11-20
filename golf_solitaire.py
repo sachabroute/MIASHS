@@ -54,13 +54,13 @@ def main():
 
             if event.type == MOUSEBUTTONDOWN:
                 mouse_coord = pygame.mouse.get_pos()
-                ## conversion coordonnées brutes en coordonnées tableau
-                if 80 <= mouse_coord[0] < colonnes * 120 + 80 and (lignes - 1) * 50 + 30 <= mouse_coord[1] < (lignes - 1) * 50 + 30 + 118:
-                    coord_card = (mouse_coord[0] - 80) // 120, (mouse_coord[1] - 30) // 50
-                    if coord_card[1] > 4:
-                        coord_card = coord_card[0], 4
-                    select_card = True
-                elif 80 <= mouse_coord[0] < len(pioche_cartes) * 5 + 80 + 70 and 400 <= mouse_coord[1] < 400 + 118:
+                for i in range(colonnes):
+                    if i * 120 + 80 <= mouse_coord[0] < i * 120 + 80 + 75 and (len(tableau_cartes[i]) - 1) * 50 + 30 <= mouse_coord[1] < (len(tableau_cartes[i]) - 1) * 50 + 30 + 118:
+                        coord_card = (mouse_coord[0] - 80) // 120, len(tableau_cartes[i]) - 1
+                        select_card = True
+                        break
+
+                if 80 <= mouse_coord[0] < len(pioche_cartes) * 5 + 80 + 70 and 400 <= mouse_coord[1] < 400 + 118:
                     pioche = True
 
         ## affiche fond
@@ -69,7 +69,10 @@ def main():
         ## affiche cartes
         for x in range(colonnes):
             for y in range(lignes):
-                fenetre.blit(cartes[tableau_cartes[x][y]], (x * 120 + 80, y * 50 + 30))
+                try:
+                    fenetre.blit(cartes[tableau_cartes[x][y]], (x * 120 + 80, y * 50 + 30))
+                except:
+                    break
 
         ## affiche pioche
         for i in range(len(pioche_cartes)):
@@ -101,12 +104,15 @@ def check_move(tableau_cartes, carte_pioche, coord_card):
     print(coord_card)
 
     valid = False
-    num_carte = int(tableau_cartes[coord_card[1]][coord_card[0]][1:3])
+    num_carte = int(tableau_cartes[coord_card[0]][coord_card[1]][1:3])
     num_carte_pioche = int(carte_pioche[1:3])
 
     if num_carte == num_carte_pioche + 1 or num_carte == num_carte_pioche - 1:
         carte_pioche = tableau_cartes[coord_card[0]][coord_card[1]]
-        tableau_cartes[coord_card[0]][coord_card[1]] = "V00"
+        del(tableau_cartes[coord_card[0]][coord_card[1]])
+    elif (num_carte == 13 and num_carte_pioche == 1) or (num_carte == 1 and num_carte_pioche == 13):
+        carte_pioche = tableau_cartes[coord_card[0]][coord_card[1]]
+        del(tableau_cartes[coord_card[0]][coord_card[1]])
     
     return(tableau_cartes, carte_pioche)
 
