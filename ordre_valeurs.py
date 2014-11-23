@@ -1,3 +1,7 @@
+import sys
+import os
+from random import *
+
 def ordre_valeurs(regles, place_as) :
     ##Renvoie automatiquement une liste d'ordre des valeurs, selon le nombre de
     ##cartes dans les règles. Fonctionne pour règles = 7, 8, 13, 14 et 16 :
@@ -59,7 +63,7 @@ def check_move(carte_depart, carte_compare, regles, place_as, ordre_jeu, color_j
     else :
         color1 = black
         color2 = red
-    corresp_color = {"same" : [type_carte_depart], "same_color" = color1, "diff_color" = color2}
+    corresp_color = {"same" : [type_carte_depart], "same_color" : color1, "diff_color" : color2}
     
     if compare == corresp_number(type_jeu) :
         valid_number = True
@@ -67,7 +71,25 @@ def check_move(carte_depart, carte_compare, regles, place_as, ordre_jeu, color_j
     if type_carte_compare in corresp_color(color_jeu) :
         valid_color = True
 
-    if valid_number = True and valid_color = True :
+    if valid_number == True and valid_color == True :
         valid = True
     
     return(valid)
+
+def generation_aleatoire(repertoire_cartes, regles) :
+    liste_images_brutes = os.listdir(repertoire_cartes)
+    liste_images_regles = []
+
+    for i in range(len(liste_images_brutes)) :
+        cardsplit = liste_images_brutes[i] #On prend du caractère [1] au caractère [2] pour avoir le numéro de carte.
+        cardnumber = cardsplit[1:3]
+        liste_cartes = ordre_valeurs(regles, "end")
+
+        try :
+            if int(cardnumber) in liste_cartes : ##Si ce numéro est inférieur au nombre dans règles, alors on append, sinon rien.
+                liste_images_regles.append(liste_images_brutes[i])
+
+        except :
+            print("Hello")
+
+    return(liste_images_regles)
