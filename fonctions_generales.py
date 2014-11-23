@@ -105,20 +105,9 @@ def generation_jeu_aleatoire(repertoire_cartes, regles, nombre_paquets) :
 def images(repertoire_cartes) :
     os.chdir(repertoire_cartes)
     liste_images_brutes = os.listdir()
-    liste_images = []
-    liste_images_utiles = []
-    prelist = []
+    dico_images = {}
     
     for i in range(len(liste_images_brutes)) :
-        prelist.append(liste_images_brutes[i])
-        prelist.append(pygame.image.load(liste_images_brutes[i]).convert_alpha())
-        liste_images.append(prelist)
-        prelist = []
-
-    for i in range(len(liste_images)) :
-        if liste_images[i][0] in cartes_alea :
-            liste_images_utiles.append(liste_images[i])
-        else :
-            pass
+        dico_images[liste_images_brutes[i]] = pygame.image.load(liste_images_brutes[i]).convert_alpha()
         
-    return(liste_images_utiles)
+    return(dico_images)

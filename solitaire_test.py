@@ -32,15 +32,33 @@ def random_jeu_sol(cartes_alea) :
         line.append(0)
     rectoverso.append(line)
     
-    return(game, rectoverso)    
+    return(game, rectoverso)
+
+def affichage_jeu(nombre_paquets, cartes_alea, rectoverso) :
+
+    dos = pygame.image.load("images/simpsons/dos/dos.png")
+    vide = pygame.image.load("images/simpsons/dos/vide.png")
+    
+    for i in range(len(game)-1) :
+        for j in range(len(game[i])) :
+            if rectoverso[i][j] == 0 :
+                fond.blit(dos, (i*85+300,j*25+213))
+            else :
+                fond.blit(dico_images[cartes_alea[i]], (i*85+300,j*25+213))
+                last_column = i*85+300
+
+    fond.blit(dos, (50,50))
+    fond.blit(vide, (135,50))
+
+    for i in range(nombre_paquets*4) :
+        fond.blit(vide, (last_column-(85*i),50))
 
 def main() :
     pygame.init()
     pygame.display.set_caption("MIASHS")
     fenetre = pygame.display.set_mode((1175, 750))
     fond = pygame.image.load("images/fond/fond.png")
-    dos = pygame.image.load("images/simpsons/dos/dos.png")
-    vide = pygame.image.load("images/simpsons/dos/vide.png")
+
     nombre_cartes = 13
     nombre_paquets = 1
     
@@ -60,19 +78,7 @@ def main() :
                 pygame.quit()
                 sys.exit()
 
-            for i in range(len(game)-1) :
-                for j in range(len(game[i])) :
-                    if rectoverso[i][j] == 0 :
-                        fond.blit(dos, (i*85+300,j*25+213))
-                    else :
-                        fond.blit(dico_images[cartes_alea[i]], (i*85+300,j*25+213))
-                        last_column = i*85+300
-
-            fond.blit(dos, (50,50))
-            fond.blit(vide, (135,50))
-
-            for i in range(nombre_paquets*4) :
-                fond.blit(vide, (last_column-(85*i),50))
+            affichage_jeu(nombre_paquets, cartes_alea, rectoverso)
 
 if __name__ == '__main__':
   main()            
