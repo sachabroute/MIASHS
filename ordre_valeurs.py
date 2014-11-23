@@ -76,20 +76,23 @@ def check_move(carte_depart, carte_compare, regles, place_as, ordre_jeu, color_j
     
     return(valid)
 
-def generation_aleatoire(repertoire_cartes, regles) :
+def generation_jeu_aleatoire(repertoire_cartes, regles, nombre_paquets) :
     liste_images_brutes = os.listdir(repertoire_cartes)
     liste_images_regles = []
 
-    for i in range(len(liste_images_brutes)) :
-        cardsplit = liste_images_brutes[i] #On prend du caractère [1] au caractère [2] pour avoir le numéro de carte.
-        cardnumber = cardsplit[1:3]
-        liste_cartes = ordre_valeurs(regles, "end")
+    for i in range(nombre_paquets) :
+        for j in range(len(liste_images_brutes)) :
+            cardsplit = liste_images_brutes[j] #On prend du caractère [1] au caractère [2] pour avoir le numéro de carte.
+            cardnumber = cardsplit[1:3]
+            liste_cartes = ordre_valeurs(regles, "end")
 
-        try :
-            if int(cardnumber) in liste_cartes : ##Si ce numéro est inférieur au nombre dans règles, alors on append, sinon rien.
-                liste_images_regles.append(liste_images_brutes[i])
+            try :
+                if int(cardnumber) in liste_cartes : ##Si ce numéro est inférieur au nombre dans règles, alors on append, sinon rien.
+                    liste_images_regles.append(liste_images_brutes[j])
 
-        except :
-            print("Hello")
+            except :
+                pass
+
+    shuffle(liste_images_regles)
 
     return(liste_images_regles)

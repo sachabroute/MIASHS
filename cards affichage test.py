@@ -11,7 +11,6 @@ def main():
 
     ##Chargement des images
     fond = pygame.image.load("images/fond/fond.png")
-
     options = pygame.image.load("images/rouage.png")
 
     ##Définition des règles
