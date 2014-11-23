@@ -26,6 +26,7 @@ def main():
     for i in range(len(liste_images_brutes)) :
         cardsplit = liste_images_brutes[i] #On prend du caractère [1] au caractère [2] pour avoir le numéro de carte.
         cardnumber = cardsplit[1:3]
+        print(cardnumber,regles)
         if int(cardnumber) <= regles : ##Si ce numéro est inférieur au nombre dans règles, alors on append, sinon rien.
             liste_images_regles.append(liste_images_brutes[i])
 
