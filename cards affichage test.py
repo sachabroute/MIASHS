@@ -26,7 +26,6 @@ def main():
     for i in range(len(liste_images_brutes)) :
         cardsplit = liste_images_brutes[i] #On prend du caractère [1] au caractère [2] pour avoir le numéro de carte.
         cardnumber = cardsplit[1:3]
-        print(cardnumber,regles)
         if int(cardnumber) <= regles : ##Si ce numéro est inférieur au nombre dans règles, alors on append, sinon rien.
             liste_images_regles.append(liste_images_brutes[i])
 
@@ -38,8 +37,8 @@ def main():
     cartes = {} ## initialisation biblioteque vide
     
     for i in range(nombre_cartes):
-        indice = liste_images_brutes[i].split(".")[0] ## correspond au nom de chaque carte. on split pour enlever le '.png', on se retrouve avec 'C01', 'C02', etc...
-        cartes["%s" %(indice)] = pygame.image.load("images/simpsons/cartes/"+liste_images_brutes[i]).convert_alpha()
+        indice = liste_images_regles[i].split(".")[0] ## correspond au nom de chaque carte. on split pour enlever le '.png', on se retrouve avec 'C01', 'C02', etc...
+        cartes["%s" %(indice)] = pygame.image.load("images/simpsons/cartes/"+liste_images_regles[i]).convert_alpha()
     #### end load images (wouaaah c'est super court t'as vu!??)
 
     ## creation d'une liste de base, et melange de cartes
@@ -76,16 +75,21 @@ def main():
                 if select_depart == False and 0 <= mouse_coord[0] < colonnes + 1 and 0 <= mouse_coord[1] < lignes: ## pour la carte de depart
                     coord_depart = mouse_coord
                     select_depart = True
+                ## si l'utilisateur click sur une carte au lieu du vide en deuxieme choix
+                elif select_dest == False and 0 <= mouse_coord[0] < colonnes + 1 and 0 <= mouse_coord[1] < lignes and shuffled[mouse_coord[1]][mouse_coord[0]] != "V00":
+                    coord_depart = mouse_coord
+                    select_depart = True
                 elif select_dest == False and 0 <= mouse_coord[0] < colonnes + 1 and 0 <= mouse_coord[1] < lignes: ## pour la position de destination
                     coord_dest = mouse_coord
                     select_dest = True
+
 
         ## affiche fond
         fenetre.blit(fond, (0,0))
         
         ## affiche cartes
         for y in range(lignes):
-            for x in range(colonnes + 1): # + 1 pour rajouter la carte vide à la fin
+            for x in range(colonnes + 1): # + 1 pour rajouter la carte vide à la fin de chaque ligne
                 fenetre.blit(cartes[shuffled[y][x]], (x * 80 + 30 , y * 118 + 30))
 
         ## affiche contour carte depart
