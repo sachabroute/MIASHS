@@ -99,7 +99,7 @@ def main():
         pygame.display.flip()
 
         if select_dest:
-            shuffled = check_move(shuffled, coord_depart, coord_dest)
+            shuffled = check_move(shuffled, coord_depart, coord_dest, regles)
             select_depart,select_dest = False, False
             time.sleep(0.2) ## pour qu'il y ait une ptite pause pour qu'on voit bien les couleurs des contours
 
