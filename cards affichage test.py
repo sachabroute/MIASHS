@@ -4,6 +4,7 @@ import sys
 import os
 import time
 from random import *
+from ordre_valeurs import *
 
 def main():
     pygame.init()
@@ -16,18 +17,21 @@ def main():
 
     ##Définition des règles
     regles = 13 ##Est égal à 13 ou 14
+    place_as = "start"
     fenetre = pygame.display.set_mode((60+(regles+1)*80, 750))
     
-    ##Chargement des cartes
-    liste_images_brutes = os.listdir("images/simpsons/cartes/") ##Insère toutes les images du répertoire dans une liste
-    liste_images_regles = [] ##Nouvelle liste qui contiendra uniquement les images de jeu
+##    ##Chargement des cartes
+##    liste_images_brutes = os.listdir("images/simpsons/cartes/") ##Insère toutes les images du répertoire dans une liste
+##    liste_images_regles = [] ##Nouvelle liste qui contiendra uniquement les images de jeu
+##
+##    ##Boucle supprimant les cartes cavalier si égal à 13
+##    for i in range(len(liste_images_brutes)) :
+##        cardsplit = liste_images_brutes[i] #On prend du caractère [1] au caractère [2] pour avoir le numéro de carte.
+##        cardnumber = cardsplit[1:3]
+##        if int(cardnumber) <= regles : ##Si ce numéro est inférieur au nombre dans règles, alors on append, sinon rien.
+##            liste_images_regles.append(liste_images_brutes[i])
 
-    ##Boucle supprimant les cartes cavalier si égal à 13
-    for i in range(len(liste_images_brutes)) :
-        cardsplit = liste_images_brutes[i] #On prend du caractère [1] au caractère [2] pour avoir le numéro de carte.
-        cardnumber = cardsplit[1:3]
-        if int(cardnumber) <= regles : ##Si ce numéro est inférieur au nombre dans règles, alors on append, sinon rien.
-            liste_images_regles.append(liste_images_brutes[i])
+    liste_images_regles = generation_aleatoire("images/simpsons/cartes/", regles)
 
     ##Fin du chargement des images
     nombre_cartes = int(len(liste_images_regles)) ##Définit le nombre de cartes à partir de la taille de la liste
@@ -60,6 +64,7 @@ def main():
     select_dest = False ## variable si la carte de destination a été selectionnée
     coord_dest = (-1,-1)
     check = False
+    valid = False
 
     while True:        
         for event in pygame.event.get():
@@ -104,46 +109,15 @@ def main():
         pygame.display.flip()
 
         if select_dest:
-            shuffled = check_move(shuffled, coord_depart, coord_dest, regles)
+            if check_move(carte_depart, carte_compare, regles, place_as, ordre_jeu, color_jeu):
+                shuffled[move_to[1]][move_to[0]] = shuffled[move_from[1]][move_from[0]]
+                shuffled[move_from[1]][move_from[0]] = "V00"
             select_depart,select_dest = False, False
             time.sleep(0.2) ## pour qu'il y ait une ptite pause pour qu'on voit bien les couleurs des contours
 
         
         ##resest variables
         mouse_coord = (-1,-1)
-
-        
-def check_move(shuffled, move_from, move_to, regles):
-
-    valid = False
-    
-    type_carte_depart = shuffled[move_from[1]][move_from[0]][0]
-    num_carte_depart = int(shuffled[move_from[1]][move_from[0]][1:3])
-
-    ## les variables compare correspondent à la carte juste avant l'emplacement d'arrivee dans une meme ligne
-    type_carte_compare = shuffled[move_to[1]][move_to[0] - 1][0]
-    num_carte_compare = int(shuffled[move_to[1]][move_to[0] - 1][1:3])
-
-
-    ordre_valeurs_cartes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14, 12, 13]
-    ordre_selon_regles = []
-    for i in range(len(ordre_valeurs_cartes)) :
-        if ordre_valeurs_cartes[i] <= regles :
-            ordre_selon_regles.append(ordre_valeurs_cartes[i])
-
-    if move_to[0] > 0 and shuffled[move_to[1]][move_to[0]] == "V00":
-        print(num_carte_depart, num_carte_compare, ordre_selon_regles.index(num_carte_depart), ordre_selon_regles.index(num_carte_compare))
-        if (type_carte_depart == type_carte_compare) and (ordre_selon_regles.index(num_carte_depart) == ordre_selon_regles.index(num_carte_compare)+1) :
-            valid = True
-
-    elif move_to[0] == 0 and num_carte_depart == 1 and shuffled[move_to[1]][move_to[0]] == "V00": ## si la carte est un as et est déplacé vers la première colonne
-        valid = True
-
-    if valid == True:
-        shuffled[move_to[1]][move_to[0]] = shuffled[move_from[1]][move_from[0]]
-        shuffled[move_from[1]][move_from[0]] = "V00"
-
-    return(shuffled)
 
 
 # ==============================================================================

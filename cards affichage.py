@@ -2,102 +2,149 @@ import pygame
 from pygame.locals import *
 import sys
 import os
+import time
 from random import *
 
-pygame.init()
-pygame.display.set_caption("MIASHS")
-fenetre = pygame.display.set_mode((1175, 750))
+def main():
+    pygame.init()
+    pygame.display.set_caption("MIASHS")
 
+    ##Chargement des images
+    fond = pygame.image.load("images/fond/fond.png")
 
+    options = pygame.image.load("images/rouage.png")
 
-#### load images
-os.chdir("images/simpsons/cartes/")
-liste_images_brutes = os.listdir()
-nombre_cartes = int(len(liste_images_brutes))
-lignes = 4
-colonnes = int(nombre_cartes / lignes)
-liste_images = [[0 for i in range(2)] for i in range(nombre_cartes)]
-for i in range(nombre_cartes):
-    liste_images[i][0] = liste_images_brutes[i]
-    liste_images[i][1] = pygame.image.load(liste_images_brutes[i]).convert_alpha()
-os.chdir("../../fond")
-fond = pygame.image.load("fond.png")
-#### end load images (wouaaah c'est super court t'as vu!??)
+    ##Définition des règles
+    regles = 13 ##Est égal à 13 ou 14
+    fenetre = pygame.display.set_mode((60+(regles+1)*80, 750))
+    
+    ##Chargement des cartes
+    liste_images_brutes = os.listdir("images/simpsons/cartes/") ##Insère toutes les images du répertoire dans une liste
+    liste_images_regles = [] ##Nouvelle liste qui contiendra uniquement les images de jeu
 
-## melange de cartes
-shuffle(liste_images)
-print(liste_images)
+    ##Boucle supprimant les cartes cavalier si égal à 13
+    for i in range(len(liste_images_brutes)) :
+        cardsplit = liste_images_brutes[i] #On prend du caractère [1] au caractère [2] pour avoir le numéro de carte.
+        cardnumber = cardsplit[1:3]
+        if int(cardnumber) <= regles : ##Si ce numéro est inférieur au nombre dans règles, alors on append, sinon rien.
+            liste_images_regles.append(liste_images_brutes[i])
 
-mouse_coord = (-1,-1)
-mouse_X, mouse_Y = 0,0
-select_depart = False
-coord_depart = (-1,-1)
-select_dest = False
-coord_dest = (-1,-1)
+    ##Fin du chargement des images
+    nombre_cartes = int(len(liste_images_regles)) ##Définit le nombre de cartes à partir de la taille de la liste
 
+    lignes = 4
+    colonnes = int(nombre_cartes / lignes)
+    cartes = {} ## initialisation biblioteque vide
+    
+    for i in range(nombre_cartes):
+        indice = liste_images_regles[i].split(".")[0] ## correspond au nom de chaque carte. on split pour enlever le '.png', on se retrouve avec 'C01', 'C02', etc...
+        cartes["%s" %(indice)] = pygame.image.load("images/simpsons/cartes/"+liste_images_regles[i]).convert_alpha()
+    #### end load images (wouaaah c'est super court t'as vu!??)
 
-while True:
+    ## creation d'une liste de base, et melange de cartes
+    liste_cartes = [name for name in cartes] ## prends chaque nom de cartes dans la biblioteque
 
-    ##resest variables
+    shuffle(liste_cartes)
+    shuffled = [liste_cartes[x:x+colonnes] for x in range(0, len(liste_cartes), colonnes)] ## cree une liste deux dimensions (lignes * colonnes) avec comme valeur les valeurs de liste_cartes
+
+    ## rajout de cartes vides a la fin des listes.
+    cartes["V00"] = pygame.image.load("images/carte_vide/V00.png").convert_alpha()
+    for i in range(lignes): ## on rajoute la carte vide à la fin de chaque ligne!
+        shuffled[i].append("V00") ## On la rajoute ici parce que si on la rajoutais avant, on aurais une carte vide qq part dans le tableau!
+                
+
     mouse_coord = (-1,-1)
-    
-    for event in pygame.event.get():
+    mouse_X, mouse_Y = 0,0
+    select_depart = False ## variable si la carte de depart a été selectionnée
+    coord_depart = (-1,-1)
+    select_dest = False ## variable si la carte de destination a été selectionnée
+    coord_dest = (-1,-1)
+    check = False
+
+    while True:        
+        for event in pygame.event.get():
+            
+            if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+                pygame.quit()
+                sys.exit()
+
+            if event.type == MOUSEBUTTONDOWN:
+                mouse_coord = pygame.mouse.get_pos()
+                ## conversion coordonnées brutes en coordonnées tableau
+                mouse_coord = (mouse_coord[0] - 30) // 80, (mouse_coord[1] - 30) // 118
+                if select_depart == False and 0 <= mouse_coord[0] < colonnes + 1 and 0 <= mouse_coord[1] < lignes: ## pour la carte de depart
+                    coord_depart = mouse_coord
+                    select_depart = True
+                ## si l'utilisateur click sur une carte au lieu du vide en deuxieme choix
+                elif select_dest == False and 0 <= mouse_coord[0] < colonnes + 1 and 0 <= mouse_coord[1] < lignes and shuffled[mouse_coord[1]][mouse_coord[0]] != "V00":
+                    coord_depart = mouse_coord
+                    select_depart = True
+                elif select_dest == False and 0 <= mouse_coord[0] < colonnes + 1 and 0 <= mouse_coord[1] < lignes: ## pour la position de destination
+                    coord_dest = mouse_coord
+                    select_dest = True
+
+
+        ## affiche fond
+        fenetre.blit(fond, (0,0))
         
-        if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
-            pygame.quit()
-            sys.exit()
+        ## affiche cartes
+        for y in range(lignes):
+            for x in range(colonnes + 1): # + 1 pour rajouter la carte vide à la fin de chaque ligne
+                fenetre.blit(cartes[shuffled[y][x]], (x * 80 + 30 , y * 118 + 30))
 
-        if event.type == MOUSEBUTTONDOWN:
-            mouse_coord = pygame.mouse.get_pos()
-            ## conversion coordonnées brutes en coordonnées tableau
-            mouse_coord = (mouse_coord[0] - 30) // 80, (mouse_coord[1] - 30) // 118
-            if select_depart == False and 0 <= mouse_coord[0] < colonnes + 1 and 0 <= mouse_coord[1] < lignes:
-                coord_depart = mouse_coord
-                select_depart = True
-            elif select_dest == False and 0 <= mouse_coord[0] < colonnes + 1 and 0 <= mouse_coord[1] < lignes:
-                coord_dest = mouse_coord
-                select_dest = True
+        ## affiche contour carte depart
+        if select_depart:
+            pygame.draw.rect(fenetre, (0, 0, 255), ((coord_depart[0] * 80 + 30 , coord_depart[1] * 118 + 30), (75 , 113)), 3)
 
-    ## affiche fond
-    fenetre.blit(fond, (0,0))
-    
-    ## affiche cartes
-    for y in range(lignes):
-        for x in range(colonnes):
-                fenetre.blit(liste_images[y * 13 + x][1], (x * 80 + 30 , y * 118 + 30))
+        ## affiche contour emplacement dest
+        if select_dest:
+            pygame.draw.rect(fenetre, (255, 255, 0), ((coord_dest[0] * 80 + 30 , coord_dest[1] * 118 + 30), (75 , 113)), 3)
+            check = True
 
-    ## affiche contour carte (+ 1 pour colonnes pour la colonne vide du depart)
-    if select_depart == True:
-        pygame.draw.rect(fenetre, (255, 0, 0), ((coord_depart[0] * 80 + 30 , coord_depart[1] * 118 + 30), (75 , 113)), 3)
+        pygame.display.flip()
 
-    ## affiche contour carte (+ 1 pour colonnes pour la colonne vide du depart)
-    if select_dest == True:
-        pygame.draw.rect(fenetre, (0, 255, 0), ((coord_dest[0] * 80 + 30 , coord_dest[1] * 118 + 30), (75 , 113)), 3)
-
-    pygame.display.flip()
+        if select_dest:
+            shuffled = check_move(shuffled, coord_depart, coord_dest, regles)
+            select_depart,select_dest = False, False
+            time.sleep(0.2) ## pour qu'il y ait une ptite pause pour qu'on voit bien les couleurs des contours
 
         
-def check_move(shuffled, move_from, move_to):
+        ##resest variables
+        mouse_coord = (-1,-1)
+
+        
+def check_move(shuffled, move_from, move_to, regles):
 
     valid = False
     
-    carte = shuffled[move_from[1]][move_from[0]]
-    carte = carte.split()
-    carte[1] = int(carte[1])
+    type_carte_depart = shuffled[move_from[1]][move_from[0]][0]
+    num_carte_depart = int(shuffled[move_from[1]][move_from[0]][1:3])
 
-    if move_to[0] > 0 and shuffled[move_to[1]][move_to[0]] == "":
-        compare = shuffled[move_to[1]][move_to[0]].split()
-        compare[1] = int(compare[1])
+    ## les variables compare correspondent à la carte juste avant l'emplacement d'arrivee dans une meme ligne
+    type_carte_compare = shuffled[move_to[1]][move_to[0] - 1][0]
+    num_carte_compare = int(shuffled[move_to[1]][move_to[0] - 1][1:3])
 
-        if (carte[0] == compare[0]) and (carte[1] == compare[1] + 1):
+
+    ordre_valeurs_cartes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14, 12, 13]
+    ordre_selon_regles = []
+    for i in range(len(ordre_valeurs_cartes)) :
+        if ordre_valeurs_cartes[i] <= regles :
+            ordre_selon_regles.append(ordre_valeurs_cartes[i])
+
+    if move_to[0] > 0 and shuffled[move_to[1]][move_to[0]] == "V00":
+        if (type_carte_depart == type_carte_compare) and (ordre_selon_regles.index(num_carte_depart) == ordre_selon_regles.index(num_carte_compare)+1) :
             valid = True
 
-    if move_to[0] == 0 and carte[0] == "1" and shuffled[move_to[1]][move_to[0]]:
+    elif move_to[0] == 0 and num_carte_depart == 1 and shuffled[move_to[1]][move_to[0]] == "V00": ## si la carte est un as et est déplacé vers la première colonne
         valid = True
 
     if valid == True:
-        shuffled[move_to[1]][move_to[0]] = " ".join(carte)
-        shuffled[move_from[1]][move_from[0]] = ""
-        return(shuffled)
-    else:
-        return(shuffled)
+        shuffled[move_to[1]][move_to[0]] = shuffled[move_from[1]][move_from[0]]
+        shuffled[move_from[1]][move_from[0]] = "V00"
+
+    return(shuffled)
+
+
+# ==============================================================================
+if __name__ == '__main__':
+  main()
