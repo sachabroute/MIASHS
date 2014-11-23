@@ -1,5 +1,9 @@
+import pygame
+import pickle
+from pygame.locals import *
 import sys
 import os
+import time
 from random import *
 
 def ordre_valeurs(regles, place_as) :
@@ -63,7 +67,7 @@ def check_move(carte_depart, carte_compare, regles, place_as, ordre_jeu, color_j
     else :
         color1 = black
         color2 = red
-    corresp_color = {"same" : [type_carte_depart], "same_color" : color1, "diff_color" : color2}
+    corresp_color = {"same_symbol" : [type_carte_depart], "same_color" : color1, "diff_color" : color2}
     
     if compare == corresp_number(type_jeu) :
         valid_number = True
@@ -77,6 +81,7 @@ def check_move(carte_depart, carte_compare, regles, place_as, ordre_jeu, color_j
     return(valid)
 
 def generation_jeu_aleatoire(repertoire_cartes, regles, nombre_paquets) :
+    ##Génère un jeu aléatoire
     liste_images_brutes = os.listdir(repertoire_cartes)
     liste_images_regles = []
 
@@ -96,3 +101,24 @@ def generation_jeu_aleatoire(repertoire_cartes, regles, nombre_paquets) :
     shuffle(liste_images_regles)
 
     return(liste_images_regles)
+
+def images(repertoire_cartes) :
+    os.chdir(repertoire_cartes)
+    liste_images_brutes = os.listdir()
+    liste_images = []
+    liste_images_utiles = []
+    prelist = []
+    
+    for i in range(len(liste_images_brutes)) :
+        prelist.append(liste_images_brutes[i])
+        prelist.append(pygame.image.load(liste_images_brutes[i]).convert_alpha())
+        liste_images.append(prelist)
+        prelist = []
+
+    for i in range(len(liste_images)) :
+        if liste_images[i][0] in cartes_alea :
+            liste_images_utiles.append(liste_images[i])
+        else :
+            pass
+        
+    return(liste_images_utiles)

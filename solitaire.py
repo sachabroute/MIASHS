@@ -7,9 +7,32 @@ import time
 from random import *
 from ordre_valeurs import *
 
-def random_jeu_sol(repertoire_cartes, regles, nombre_paquets) :
-    generation_cartes(repertoire_cartes, regles, nombre_paquets)
+def random_jeu_sol(cartes_alea) :
+    nombre_cartes = len(cartes_alea)
+
+    i = 0
+    j = 0
+    game = []
+    rectoverso = []
+    line = []
+
+    while j < int(len(cartes_alea)/2) :      
+        i = i+1
+        j = j+i
+        game.append(cartes_alea[j:j+i])
+    game.append(cartes_alea[j:])
+
+    for i in range(len(game)-1) :
+        for j in range(len(game[i])-1) :
+            line.append(0)
+        line.append(1)
+        rectoverso.append(line)
+        line = []
+    for i in range(len(game[-1])) :
+        line.append(0)
+    rectoverso.append(line)
     
+    return(game, rectoverso)    
 
 def main() :
     pygame.init()
@@ -17,16 +40,7 @@ def main() :
     fenetre = pygame.display.set_mode((1175, 750))
 
     cartes_alea = generation_jeu_aleatoire("images/simpsons/cartes/", 13, 1)
-    nombre_cartes = len(cartes_alea)
+    game, rectoverso = random_jeu_sol(cartes_alea)
 
-    longueur_paquet = 0
-    i = 0
-    game = []
+    liste_images = images("images/simpsons/cartes/") 
 
-    while longueur_paquet < len(cartes_alea)/2 :
-        game.append(cartes_alea[longueur_paquet:longueur_paquet+i])
-        longeur_paquet = longueur_paquet + i
-        i = i+1
-    print(game)
-        
-    
