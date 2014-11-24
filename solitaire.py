@@ -40,7 +40,7 @@ def main() :
     fenetre = pygame.display.set_mode((1175, 750))
     fond = pygame.image.load("images/fond/fond.png")
     dos = pygame.image.load("images/simpsons/dos/dos.png")
-    vide = pygame.image.load("images/simpsons/dos/vide.png")
+    vide = pygame.image.load("images/carte_vide/V00.png")
     nombre_cartes = 13
     nombre_paquets = 2
     
