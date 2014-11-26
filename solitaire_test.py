@@ -37,7 +37,7 @@ def random_jeu_sol(cartes_alea) :
 def affichage_jeu(nombre_paquets, cartes_alea, rectoverso) :
 
     dos = pygame.image.load("images/simpsons/dos/dos.png")
-    vide = pygame.image.load("images/simpsons/dos/vide.png")
+    vide = pygame.image.load("images/carte_vide/V00.png")
     
     for i in range(len(game)-1) :
         for j in range(len(game[i])) :
