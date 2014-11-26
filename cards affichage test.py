@@ -15,7 +15,7 @@ def main():
     options = pygame.image.load("images/rouage.png")
 
     ##Définition des règles
-    regles = 13 ##Est égal à 13 ou 14
+    regles = 16 ##Est égal à 13 ou 14
     fenetre = pygame.display.set_mode((60+(regles+1)*80, 750))
     
     ##Chargement des cartes
@@ -50,7 +50,7 @@ def main():
         liste_cartes.append("V00")
 
     shuffle(liste_cartes)
-    shuffled = [liste_cartes[x:x+colonnes+1] for x in range(0, len(liste_cartes), colonnes + 1)] ## cree une liste deux dimensions (lignes * colonnes) avec comme valeur les valeurs de liste_cartes
+    shuffled = [liste_cartes[x:x + colonnes + 1] for x in range(0, len(liste_cartes), colonnes + 1)] ## cree une liste deux dimensions (lignes * colonnes) avec comme valeur les valeurs de liste_cartes
 
     ## rajout de cartes vides a la fin des listes.
 ##    cartes["V00"] = pygame.image.load("images/carte_vide/V00.png").convert_alpha()
@@ -77,14 +77,14 @@ def main():
                 mouse_coord = pygame.mouse.get_pos()
                 ## conversion coordonnées brutes en coordonnées tableau
                 mouse_coord = (mouse_coord[0] - 30) // 80, (mouse_coord[1] - 30) // 118
-                if select_depart == False and 0 <= mouse_coord[0] < colonnes + 1 and 0 <= mouse_coord[1] < lignes: ## pour la carte de depart
+                if select_depart == False and 0 <= mouse_coord[0] < colonnes + 1 and 0 <= mouse_coord[1] < lignes and shuffled[mouse_coord[1]][mouse_coord[0]] != "V00": ## pour la carte de depart
                     coord_depart = mouse_coord
                     select_depart = True
                 ## si l'utilisateur click sur une carte au lieu du vide en deuxieme choix
                 elif select_dest == False and 0 <= mouse_coord[0] < colonnes + 1 and 0 <= mouse_coord[1] < lignes and shuffled[mouse_coord[1]][mouse_coord[0]] != "V00":
                     coord_depart = mouse_coord
                     select_depart = True
-                elif select_dest == False and 0 <= mouse_coord[0] < colonnes + 1 and 0 <= mouse_coord[1] < lignes: ## pour la position de destination
+                elif select_dest == False and 0 <= mouse_coord[0] < colonnes + 1 and 0 <= mouse_coord[1] < lignes and shuffled[mouse_coord[1]][mouse_coord[0]] == "V00": ## pour la position de destination
                     coord_dest = mouse_coord
                     select_dest = True
 
