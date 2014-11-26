@@ -29,7 +29,6 @@ def main():
     liste_cartes = [name for name in cartes]
     shuffle(liste_cartes)
     tableau_cartes = [liste_cartes[x:x+lignes] for x in range(0, colonnes * lignes, lignes)]
-    print(tableau_cartes)
     pioche_cartes = liste_cartes[colonnes * lignes:]
     poubelle_cartes = []
 
@@ -54,14 +53,12 @@ def main():
 
             if event.type == MOUSEBUTTONDOWN:
                 mouse_coord = pygame.mouse.get_pos()
-                for i in range(colonnes):
-                    if i * 120 + 80 <= mouse_coord[0] < i * 120 + 80 + 75 and (len(tableau_cartes[i]) - 1) * 50 + 30 <= mouse_coord[1] < (len(tableau_cartes[i]) - 1) * 50 + 30 + 118:
-                        coord_card = (mouse_coord[0] - 80) // 120, len(tableau_cartes[i]) - 1
-                        select_card = True
-                        break
+                if check_mouse(mouse_coord, len(tableau_cartes), len(pioche_cartes), colonnes) == "cartes":
+                    coord_card = (mouse_coord[0] - 80) // 120, len(tableau_cartes[i]) - 1
+                    select_card = True
 
-                if 80 <= mouse_coord[0] < len(pioche_cartes) * 5 + 80 + 70 and 400 <= mouse_coord[1] < 400 + 118:
-                    pioche = True
+                if check_mouse(mouse_coord, len(tableau_cartes), len(pioche_cartes), colonnes) == "pioche":
+                    carte_pioche = pioche_cartes.pop()
 
         ## affiche fond
         fenetre.blit(fond, (0,0))
@@ -83,10 +80,6 @@ def main():
             pygame.draw.rect(fenetre, (0, 255, 0), ((coord_card[0] * 120 + 80 , coord_card[1] * 50 + 30), (75 , 113)), 3)
 
 
-        if pioche:
-            carte_pioche = pioche_cartes.pop()
-            pioche = False
-
         fenetre.blit(cartes[carte_pioche], (300, 400))
 
         pygame.display.flip()
@@ -94,15 +87,15 @@ def main():
         if select_card:
             tableau_cartes, carte_pioche = check_move(tableau_cartes, carte_pioche, coord_card)
             select_card = False
-            time.sleep(0.5)
+            time.sleep(0.3)
         
-        ##resest variables
+        ##reset variables
         mouse_coord = (-1,-1)
+
+    
 
         
 def check_move(tableau_cartes, carte_pioche, coord_card):
-    print(coord_card)
-
     valid = False
     num_carte = int(tableau_cartes[coord_card[0]][coord_card[1]][1:3])
     num_carte_pioche = int(carte_pioche[1:3])
@@ -115,6 +108,17 @@ def check_move(tableau_cartes, carte_pioche, coord_card):
         del(tableau_cartes[coord_card[0]][coord_card[1]])
     
     return(tableau_cartes, carte_pioche)
+
+
+def check_mouse(mouse, nbre_cartes, nbre_pioche, colonnes):
+
+    for i in range(colonnes):
+        if i * 120 + 80 <= mouse[0] < i * 120 + 80 + 75 and (nbre_cartes - 1) * 50 + 30 <= mouse[1] < (nbre_cartes - 1) * 50 + 30 + 118:
+            return("cartes")
+
+    if 80 <= mouse[0] < (nbre_pioche * 5) + 80 + 75 and 400 <= mouse[1] < 400 + 118:
+        return("pioche")
+    
 
 
 # ==============================================================================

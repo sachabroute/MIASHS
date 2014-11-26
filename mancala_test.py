@@ -13,17 +13,17 @@ def main():
 
     nbre_cases = 6
     
-    plateau_jeu = [4 for i in range((nbre_cases+1)*2)]
-    plateau_jeu[nbre_cases], plateau_jeu[-1]= 0, 0
+    plateau_jeu = [[4 for x in range(nbre_cases + 1)] for y in range(2)]
+    plateau_jeu[0][-1], plateau_jeu[1][-1]= 0, 0
 
-    plateau_pygame = []
+    plateau_pygame = [[],[]]
     for y in range(2):
         for x in range(nbre_cases):
-            plateau_pygame.append(pygame.Rect(x*80+170,y*100+110,60,80))
-        if y == 0:
-            plateau_pygame.append(pygame.Rect(650,100,75,200))
-        if y == 1:
-            plateau_pygame.append(pygame.Rect(75,100,75,200))
+                plateau_pygame[y].append(pygame.Rect(x*80+170,y*100+110,60,80))
+        if y == 0:  
+            plateau_pygame[y].append(pygame.Rect(650,100,75,200))
+        elif y == 1:
+            plateau_pygame[y].append(pygame.Rect(75,100,75,200))
 ##
 ##    while restart == 'o':
 ##
@@ -44,6 +44,8 @@ def main():
 
     while True:
 
+        coords = (-1,-1)
+
         for event in pygame.event.get():
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                 pygame.quit()
@@ -52,6 +54,9 @@ def main():
                 print(pygame.mouse.get_pos())
                 coords = check_mouse(nbre_cases, plateau_pygame, pygame.mouse.get_pos())
                 print(coords)
+
+        if coords != (-1,-1):
+            tableau_jeu = move(tableau_jeu, coords)
                             
                 
         
@@ -62,24 +67,23 @@ def main():
         
         for y in range(2):
             for x in range(nbre_cases+1):
-                pygame.draw.rect(fenetre, (200,200,250), plateau_pygame[(nbre_cases+1)*y+x],0)
+                pygame.draw.rect(fenetre, (200,200,250), plateau_pygame[y][x],0)
 
-        label = myfont.render("%d" %(plateau_jeu[nbre_cases]), 1, (0,0,0))
+        label = myfont.render("%d" %(plateau_jeu[0][-1]), 1, (0,0,0))
         fenetre.blit(label, (75,100))
         
-        label = myfont.render("%d" %(plateau_jeu[len(plateau_jeu)-1]), 1, (0,0,0))
+        label = myfont.render("%d" %(plateau_jeu[1][-1]), 1, (0,0,0))
         fenetre.blit(label, (650,100))
 
-        for x in range(len(plateau_jeu)-1):
-            if x < nbre_cases:
-                label = myfont.render("%d" %(plateau_jeu[x]), 1, (0,0,0))
-                fenetre.blit(label, (x*80+170,100+110))
-            elif x > nbre_cases:
-                label = myfont.render("%d" %(plateau_jeu[x]), 1, (0,0,0))
-                fenetre.blit(label, ((x-)*80+170,110))
+
+        for y in range(2):
+            for x in range(nbre_cases):
+                    label = myfont.render("%d" %(plateau_jeu[y][x]), 1, (0,0,0))
+                    fenetre.blit(label, (x*80+170,y*100+110))
 
 
         pygame.display.flip()
+
 
 
 def check_mouse(nbre_cases, plateau, mouse):
@@ -96,11 +100,10 @@ def check_mouse(nbre_cases, plateau, mouse):
     return(-1,-1)
 
 
-def move(tableau, x, y):
+def move(tableau, x, y)
 
     for i in range(tableau[y][x]):
         tableau
-
 
 
 # ------------------------------------------------------------------------------
