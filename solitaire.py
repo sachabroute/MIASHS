@@ -40,9 +40,9 @@ def main() :
     fenetre = pygame.display.set_mode((1175, 750))
     fond = pygame.image.load("images/fond/fond.png")
     dos = pygame.image.load("images/simpsons/dos/dos.png")
-    vide = pygame.image.load("images/simpsons/dos/vide.png")
-    nombre_cartes = 16
-    nombre_paquets = 1
+    vide = pygame.image.load("images/carte_vide/V00.png")
+    nombre_cartes = 13
+    nombre_paquets = 2
     
     cartes_alea = generation_jeu_aleatoire("images/simpsons/cartes/", nombre_cartes, nombre_paquets)
     game, rectoverso = random_jeu_sol(cartes_alea)
