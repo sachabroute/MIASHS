@@ -15,7 +15,7 @@ def main():
     options = pygame.image.load("images/rouage.png")
 
     ##Définition des règles
-    regles = 16 ##Est égal à 13 ou 14
+    regles = 13 ##Est égal à 13 ou 14
     fenetre = pygame.display.set_mode((60+(regles+1)*80, 750))
     
     ##Chargement des cartes
@@ -105,6 +105,7 @@ def main():
         if select_dest:
             pygame.draw.rect(fenetre, (255, 255, 0), ((coord_dest[0] * 80 + 30 , coord_dest[1] * 118 + 30), (75 , 113)), 3)
             check = True
+            print(shuffled)
 
         pygame.display.flip()
 
@@ -112,6 +113,9 @@ def main():
             shuffled = check_move(shuffled, coord_depart, coord_dest, regles)
             select_depart,select_dest = False, False
             time.sleep(0.2) ## pour qu'il y ait une ptite pause pour qu'on voit bien les couleurs des contours
+
+        if check_end(shuffled):
+            end_game()
 
         
         ##resest variables
@@ -148,6 +152,21 @@ def check_move(shuffled, move_from, move_to, regles):
         shuffled[move_from[1]][move_from[0]] = "V00"
 
     return(shuffled)
+
+
+def check_end(shuffled, lignes, colonnes):
+
+    temp = 0
+    break_loop = False
+    
+    for y in range(lignes):
+        for x in range(colonnes - 1): # -1 pour pouvoir comparer un a un
+            temp = shuffled[y][x]
+            if temp >= shuffled[y][x+1]:
+                return(False)
+
+    return(True)
+            
 
 
 # ==============================================================================
