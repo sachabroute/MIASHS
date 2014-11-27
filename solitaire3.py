@@ -60,8 +60,8 @@ def main() :
     fond = pygame.image.load("images/fond/fond.png")
     dos = pygame.image.load("images/simpsons/dos/dos.png")
     vide = pygame.image.load("images/carte_vide/V00.png")
-    nombre_cartes = 16
-    nombre_paquets = 4
+    nombre_cartes = 13
+    nombre_paquets = 1
     
     cartes_alea = generation_jeu_aleatoire("images/simpsons/cartes/", nombre_cartes, nombre_paquets)
     game = random_jeu_sol(cartes_alea)
@@ -108,6 +108,13 @@ def main() :
                         fenetre.blit(vide, (50,50))
                     else :
                         fenetre.blit(dos, (50,50))
+
+                if 135 < mouse_coord[0] < 210 and 50 < mouse_coord[1] < 163 :
+                    try :
+                        card_select = game[-1][-1][0]
+                        print(card_select)
+                    except :
+                        pass
 
                 for i in range(int((last_column-400)/85)+1) :
                     if i*85+400 < mouse_coord[0] < i*85+475 :
