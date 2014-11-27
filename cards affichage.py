@@ -44,13 +44,18 @@ def main():
     ## creation d'une liste de base, et melange de cartes
     liste_cartes = [name for name in cartes] ## prends chaque nom de cartes dans la biblioteque
 
-    shuffle(liste_cartes)
-    shuffled = [liste_cartes[x:x+colonnes] for x in range(0, len(liste_cartes), colonnes)] ## cree une liste deux dimensions (lignes * colonnes) avec comme valeur les valeurs de liste_cartes
-
     ## rajout de cartes vides a la fin des listes.
     cartes["V00"] = pygame.image.load("images/carte_vide/V00.png").convert_alpha()
-    for i in range(lignes): ## on rajoute la carte vide à la fin de chaque ligne!
-        shuffled[i].append("V00") ## On la rajoute ici parce que si on la rajoutais avant, on aurais une carte vide qq part dans le tableau!
+    for i in range(lignes):
+        liste_cartes.append("V00")
+
+    shuffle(liste_cartes)
+    shuffled = [liste_cartes[x:x + colonnes + 1] for x in range(0, len(liste_cartes), colonnes + 1)] ## cree une liste deux dimensions (lignes * colonnes) avec comme valeur les valeurs de liste_cartes
+
+    ## rajout de cartes vides a la fin des listes.
+##    cartes["V00"] = pygame.image.load("images/carte_vide/V00.png").convert_alpha()
+##    for i in range(lignes): ## on rajoute la carte vide à la fin de chaque ligne!
+##        shuffled[i].append("V00") ## On la rajoute ici parce que si on la rajoutais avant, on aurais une carte vide qq part dans le tableau!
                 
 
     mouse_coord = (-1,-1)
@@ -72,14 +77,14 @@ def main():
                 mouse_coord = pygame.mouse.get_pos()
                 ## conversion coordonnées brutes en coordonnées tableau
                 mouse_coord = (mouse_coord[0] - 30) // 80, (mouse_coord[1] - 30) // 118
-                if select_depart == False and 0 <= mouse_coord[0] < colonnes + 1 and 0 <= mouse_coord[1] < lignes: ## pour la carte de depart
+                if select_depart == False and 0 <= mouse_coord[0] < colonnes + 1 and 0 <= mouse_coord[1] < lignes and shuffled[mouse_coord[1]][mouse_coord[0]] != "V00": ## pour la carte de depart
                     coord_depart = mouse_coord
                     select_depart = True
                 ## si l'utilisateur click sur une carte au lieu du vide en deuxieme choix
                 elif select_dest == False and 0 <= mouse_coord[0] < colonnes + 1 and 0 <= mouse_coord[1] < lignes and shuffled[mouse_coord[1]][mouse_coord[0]] != "V00":
                     coord_depart = mouse_coord
                     select_depart = True
-                elif select_dest == False and 0 <= mouse_coord[0] < colonnes + 1 and 0 <= mouse_coord[1] < lignes: ## pour la position de destination
+                elif select_dest == False and 0 <= mouse_coord[0] < colonnes + 1 and 0 <= mouse_coord[1] < lignes and shuffled[mouse_coord[1]][mouse_coord[0]] == "V00": ## pour la position de destination
                     coord_dest = mouse_coord
                     select_dest = True
 
@@ -100,6 +105,7 @@ def main():
         if select_dest:
             pygame.draw.rect(fenetre, (255, 255, 0), ((coord_dest[0] * 80 + 30 , coord_dest[1] * 118 + 30), (75 , 113)), 3)
             check = True
+            print(shuffled)
 
         pygame.display.flip()
 
@@ -107,6 +113,9 @@ def main():
             shuffled = check_move(shuffled, coord_depart, coord_dest, regles)
             select_depart,select_dest = False, False
             time.sleep(0.2) ## pour qu'il y ait une ptite pause pour qu'on voit bien les couleurs des contours
+
+        if check_end(shuffled, lignes, colonnes):
+            end_game()
 
         
         ##resest variables
@@ -143,6 +152,21 @@ def check_move(shuffled, move_from, move_to, regles):
         shuffled[move_from[1]][move_from[0]] = "V00"
 
     return(shuffled)
+
+
+def check_end(shuffled, lignes, colonnes):
+
+    temp = 0
+    break_loop = False
+    
+    for y in range(lignes):
+        for x in range(colonnes - 1): # -1 pour pouvoir comparer un a un
+            temp = shuffled[y][x]
+            if temp >= shuffled[y][x+1]:
+                return(False)
+
+    return(True)
+            
 
 
 # ==============================================================================
