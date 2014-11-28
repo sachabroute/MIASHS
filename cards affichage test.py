@@ -115,7 +115,7 @@ def main():
             time.sleep(0.2) ## pour qu'il y ait une ptite pause pour qu'on voit bien les couleurs des contours
 
         if check_end(shuffled, lignes, colonnes):
-            end_game()
+            end_game('win')
 
         
         ##resest variables

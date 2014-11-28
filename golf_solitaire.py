@@ -11,19 +11,39 @@ def main():
     pygame.display.set_caption("MIASHS")
     fenetre = pygame.display.set_mode((1175, 750))
 
-
-
-    #### load images
+    ##Chargement des images
     fond = pygame.image.load("images/fond/fond.png")
-    liste_images_brutes = os.listdir("images/pokemon/cartes/")
-    nombre_cartes = int(len(liste_images_brutes))
-    lignes = 5   ## a voir si on peut changer ces valeurs pour ce jeu
-    colonnes = 7 ## a voir si on peut changer ces valeurs pour ce jeu
-    cartes = {}
+
+    options = pygame.image.load("images/rouage.png")
+
+    ##Définition des règles
+    regles = 13 ##Est égal à 13 ou 14
+    fenetre = pygame.display.set_mode((60+(regles+1)*80, 750))
+    
+    ##Chargement des cartes
+    liste_images_brutes = os.listdir("images/simpsons/cartes/") ##Insère toutes les images du répertoire dans une liste
+    liste_images_regles = [] ##Nouvelle liste qui contiendra uniquement les images de jeu
+
+    ##Boucle supprimant les cartes cavalier si égal à 13
+    for i in range(len(liste_images_brutes)) :
+        cardsplit = liste_images_brutes[i] #On prend du caractère [1] au caractère [2] pour avoir le numéro de carte.
+        cardnumber = cardsplit[1:3]
+        if int(cardnumber) <= regles : ##Si ce numéro est inférieur au nombre dans règles, alors on append, sinon rien.
+            liste_images_regles.append(liste_images_brutes[i])
+
+    ##Fin du chargement des images
+    nombre_cartes = int(len(liste_images_regles)) ##Définit le nombre de cartes à partir de la taille de la liste
+
+## a voir si on peut changer les lignes et colonnes par la suite
+    lignes = 5
+    colonnes = 7
+    cartes = {} ## initialisation biblioteque vide
+    
     for i in range(nombre_cartes):
-        indice = liste_images_brutes[i].split(".")[0]
-        cartes["%s" %(indice)] = pygame.image.load("images/pokemon/cartes/"+liste_images_brutes[i]).convert_alpha()
+        indice = liste_images_regles[i].split(".")[0] ## correspond au nom de chaque carte. on split pour enlever le '.png', on se retrouve avec 'C01', 'C02', etc...
+        cartes["%s" %(indice)] = pygame.image.load("images/simpsons/cartes/"+liste_images_regles[i]).convert_alpha()
     #### end load images (wouaaah c'est super court t'as vu!??)
+
 
     ## creation d'une liste de base, et melange de cartes
     liste_cartes = [name for name in cartes]
@@ -33,7 +53,7 @@ def main():
     poubelle_cartes = []
 
     ## le dos des cartes (pour la pioche), carte vide
-    dos = pygame.image.load("images/pokemon/dos/dos.png").convert_alpha()
+    dos = pygame.image.load("images/simpsons/dos/dos.png").convert_alpha()
     cartes["V00"] = pygame.image.load("images/carte_vide/V00.png").convert_alpha()
     carte_pioche = "V00"
     
@@ -53,12 +73,16 @@ def main():
 
             if event.type == MOUSEBUTTONDOWN:
                 mouse_coord = pygame.mouse.get_pos()
-                if check_mouse(mouse_coord, len(tableau_cartes), len(pioche_cartes), colonnes) == "cartes":
-                    coord_card = (mouse_coord[0] - 80) // 120, len(tableau_cartes[i]) - 1
+                click_type, ind = check_mouse(mouse_coord, tableau_cartes, len(pioche_cartes), colonnes)
+                if click_type == "cartes" and carte_pioche != "V00":
+                    coord_card = (mouse_coord[0] - 80) // 120, len(tableau_cartes[ind]) - 1
                     select_card = True
 
-                if check_mouse(mouse_coord, len(tableau_cartes), len(pioche_cartes), colonnes) == "pioche":
-                    carte_pioche = pioche_cartes.pop()
+                elif click_type == "pioche":
+                    try:
+                        carte_pioche = pioche_cartes.pop()
+                    except IndexError:
+                        end_game('loss')
 
         ## affiche fond
         fenetre.blit(fond, (0,0))
@@ -88,6 +112,10 @@ def main():
             tableau_cartes, carte_pioche = check_move(tableau_cartes, carte_pioche, coord_card)
             select_card = False
             time.sleep(0.3)
+
+        ##ENDGAME
+        if tableau_cartes == []:
+            end_game('win')
         
         ##reset variables
         mouse_coord = (-1,-1)
@@ -110,14 +138,19 @@ def check_move(tableau_cartes, carte_pioche, coord_card):
     return(tableau_cartes, carte_pioche)
 
 
-def check_mouse(mouse, nbre_cartes, nbre_pioche, colonnes):
+def check_mouse(mouse, tableau_cartes, nbre_pioche, colonnes):
 
     for i in range(colonnes):
-        if i * 120 + 80 <= mouse[0] < i * 120 + 80 + 75 and (nbre_cartes - 1) * 50 + 30 <= mouse[1] < (nbre_cartes - 1) * 50 + 30 + 118:
-            return("cartes")
+        if (i * 120) + 80 <= mouse[0] < (i * 120) + 80 + 75 and ((len(tableau_cartes[i]) - 1) * 50) + 30 <= mouse[1] < ((len(tableau_cartes[i]) - 1) * 50) + 30 + 118:
+            return("cartes",i)
 
     if 80 <= mouse[0] < (nbre_pioche * 5) + 80 + 75 and 400 <= mouse[1] < 400 + 118:
-        return("pioche")
+        return("pioche",'')
+
+    return('','')
+
+def end_game(outcome):
+    print(outcome)
     
 
 
