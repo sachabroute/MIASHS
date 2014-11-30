@@ -57,19 +57,20 @@ def check_move(carte_depart, carte_compare, regles, place_as, ordre_jeu, color_j
     num_carte_compare = int(carte_compare[1:3])
     
     compare = ordre_selon_regles.index(num_carte_depart)-ordre_selon_regles.index(num_carte_compare)
-    corresp_number = {"sup" : -1, "inf" : 1, "same" : 0}
+    corresp_number = {"sup" : [-1], "inf" : [1], "same" : [0], "both" : [-1,1] }
 
     red = ["D", "H"]
     black = ["C", "S"]
+    
     if type_carte_depart in red :
         color1 = red
         color2 = black
     else :
         color1 = black
         color2 = red
-    corresp_color = {"same_symbol" : [type_carte_depart], "same_color" : color1, "diff_color" : color2}
+    corresp_color = {"same_symbol" : [type_carte_depart], "same_color" : color1, "diff_color" : color2, "any" : ["C", "D", "H", "S"]}
     
-    if compare == corresp_number(type_jeu) :
+    if compare in corresp_number(type_jeu) :
         valid_number = True
 
     if type_carte_compare in corresp_color(color_jeu) :
@@ -108,6 +109,8 @@ def images(repertoire_cartes) :
     dico_images = {}
     
     for i in range(len(liste_images_brutes)) :
-        dico_images[liste_images_brutes[i]] = pygame.image.load(liste_images_brutes[i]).convert_alpha()
-        
+        try :
+            dico_images[liste_images_brutes[i]] = pygame.image.load(liste_images_brutes[i]).convert_alpha()
+        except :
+            pass
     return(dico_images)

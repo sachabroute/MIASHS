@@ -58,15 +58,15 @@ def main() :
     pygame.display.set_caption("MIASHS")
     fenetre = pygame.display.set_mode((1175, 750))
     fond = pygame.image.load("images/fond/fond.png")
-    dos = pygame.image.load("images/simpsons/dos/dos.png")
+    dos = pygame.image.load("images/classic/dos/dos.png")
     vide = pygame.image.load("images/carte_vide/V00.png")
     nombre_cartes = 13
     nombre_paquets = 1
     
-    cartes_alea = generation_jeu_aleatoire("images/simpsons/cartes/", nombre_cartes, nombre_paquets)
+    cartes_alea = generation_jeu_aleatoire("images/classic/cartes/", nombre_cartes, nombre_paquets)
     game = random_jeu_sol(cartes_alea)
 
-    dico_images = images("images/simpsons/cartes/")
+    dico_images = images("images/classic/cartes/")
     last_column = taille_fenetre(game)
     fenetre = pygame.display.set_mode((last_column+125, 750))
     fenetre.blit(fond, (0,0))
