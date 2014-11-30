@@ -6,9 +6,9 @@ import os
 import time
 from random import *
 
-def ordre_valeurs(regles, place_as) :
+def ordre_valeurs(nombre_cartes, place_as) :
     ##Renvoie automatiquement une liste d'ordre des valeurs, selon le nombre de
-    ##cartes dans les règles. Fonctionne pour règles = 7, 8, 13, 14 et 16 :
+    ##cartes dans les règles. Fonctionne pour nombre_cartes = 7, 8, 13, 14 et 16 :
     ##Jeu de 28 cartes (4*7) : 7, 8, 9, 10, J, Q, K
     ##Jeu de 32 cartes (4*8) : 1, 7, 8, 9, 10, J, Q, K
     ##Jeu de 52 cartes (4*13) : 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, J, Q, K
@@ -21,18 +21,18 @@ def ordre_valeurs(regles, place_as) :
     ordre_priorite_cartes = [7, 8, 9, 10, 11, 12, 13, 1, 2, 3, 4, 5, 6, 14, 15, 16]
     ordre_selon_regles = []
 
-    ordre_priorite_cartes = ordre_priorite_cartes[0:regles]
+    ordre_priorite_cartes = ordre_priorite_cartes[0:nombre_cartes]
 
     for i in range(len(ordre_valeurs_cartes)) :
         if ordre_valeurs_cartes[i] in ordre_priorite_cartes :
             ordre_selon_regles.append(ordre_valeurs_cartes[i])
 
     if 1 in ordre_selon_regles and place_as == "end" :
-        ordre_selon_regles.insert(regles-1, ordre_selon_regles.pop(0))
+        ordre_selon_regles.insert(nombre_cartes-1, ordre_selon_regles.pop(0))
         
     return(ordre_selon_regles)
 
-def check_move(carte_depart, carte_compare, regles, place_as, ordre_jeu, color_jeu) :
+def check_move(carte_depart, carte_compare, regles) :
     ##Renvoie Vrai ou Faux selon que la carte sélectionnée peut etre placée sur/après
     ##la carte visée, selon :
     ##
@@ -49,7 +49,7 @@ def check_move(carte_depart, carte_compare, regles, place_as, ordre_jeu, color_j
     valid_color = False
     valid = False
     
-    ordre_selon_regles = ordre_valeurs(regles, place_as)
+    ordre_selon_regles = ordre_valeurs(regles[0], regles[1])
     
     type_carte_depart = carte_depart[0]
     num_carte_depart = int(carte_depart[1:3])
@@ -69,11 +69,11 @@ def check_move(carte_depart, carte_compare, regles, place_as, ordre_jeu, color_j
         color1 = black
         color2 = red
     corresp_color = {"same_symbol" : [type_carte_depart], "same_color" : color1, "diff_color" : color2, "any" : ["C", "D", "H", "S"]}
-    
-    if compare in corresp_number(type_jeu) :
+
+    if compare in corresp_number[regles[2]] :
         valid_number = True
 
-    if type_carte_compare in corresp_color(color_jeu) :
+    if type_carte_compare in corresp_color[regles[3]] :
         valid_color = True
 
     if valid_number == True and valid_color == True :
@@ -81,7 +81,7 @@ def check_move(carte_depart, carte_compare, regles, place_as, ordre_jeu, color_j
     
     return(valid)
 
-def generation_jeu_aleatoire(repertoire_cartes, regles, nombre_paquets) :
+def generation_jeu_aleatoire(repertoire_cartes, nombre_cartes, nombre_paquets) :
     ##Génère un jeu aléatoire
     liste_images_brutes = os.listdir(repertoire_cartes)
     liste_images_regles = []
@@ -90,7 +90,7 @@ def generation_jeu_aleatoire(repertoire_cartes, regles, nombre_paquets) :
         for j in range(len(liste_images_brutes)) :
             cardsplit = liste_images_brutes[j] #On prend du caractère [1] au caractère [2] pour avoir le numéro de carte.
             cardnumber = cardsplit[1:3]
-            liste_cartes = ordre_valeurs(regles, "end")
+            liste_cartes = ordre_valeurs(nombre_cartes, "end")
 
             try :
                 if int(cardnumber) in liste_cartes : ##Si ce numéro est inférieur au nombre dans règles, alors on append, sinon rien.

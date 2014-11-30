@@ -52,6 +52,20 @@ def taille_fenetre(game) :
                 last_column = i*85+400
 
     return(last_column)
+
+def cardclick(mouse_coord, game, last_column) :
+    for i in range(int((last_column-400)/85)+1) :
+        if i*85+400 < mouse_coord[0] < i*85+475 :
+            j = len(game[i])-1
+            if j*25+213 < mouse_coord[1] < j*25+326 :
+                card_select = game[i][-1][0]
+                pos = [i*85+400, j*25+213]
+                                
+    if 135 < mouse_coord[0] < 210 and 50 < mouse_coord[1] < 163 :
+        card_select = game[-1][-1][0]
+        pos = [135, 50]
+
+    return(card_select, pos)
     
 def main() :
     pygame.init()
@@ -60,8 +74,11 @@ def main() :
     fond = pygame.image.load("images/fond/fond.png")
     dos = pygame.image.load("images/classic/dos/dos.png")
     vide = pygame.image.load("images/carte_vide/V00.png")
+    image_select1 = pygame.image.load("images/select.png")
+    image_select2 = pygame.image.load("images/select2.png")
     nombre_cartes = 13
     nombre_paquets = 1
+    regles = [nombre_cartes, "start", "sup", "diff_color"]
     
     cartes_alea = generation_jeu_aleatoire("images/classic/cartes/", nombre_cartes, nombre_paquets)
     game = random_jeu_sol(cartes_alea)
@@ -71,7 +88,8 @@ def main() :
     fenetre = pygame.display.set_mode((last_column+125, 750))
     fenetre.blit(fond, (0,0))
     fenetre.blit(dos, (50,50))
-    fenetre.blit(vide, (135,50)) 
+    fenetre.blit(vide, (135,50))
+    phase = 1
 
     while True:        
         for event in pygame.event.get():
@@ -92,6 +110,8 @@ def main() :
                 fenetre.blit(vide, (last_column-(85*i),50))
 
             if event.type == MOUSEBUTTONDOWN and event.button == 1 :
+                card_select = ""
+                pos = []
                 mouse_coord = pygame.mouse.get_pos()
                 if 50 < mouse_coord[0] < 125 and 50 < mouse_coord[1] < 163 :
                     try :
@@ -99,29 +119,40 @@ def main() :
                         game[-2].pop()
                     except :
                         game[-2] = game[-1]
-                        game[-1] = []
-                    try:
-                        fenetre.blit(dico_images[game[-1][-1][0]], (135,50))
-                    except:
-                        fenetre.blit(vide, (135,50))
+                        game[-1] = []                       
                     if game[-2] == [] :
                         fenetre.blit(vide, (50,50))
                     else :
                         fenetre.blit(dos, (50,50))
 
-                if 135 < mouse_coord[0] < 210 and 50 < mouse_coord[1] < 163 :
+                if phase == 1 :
                     try :
-                        card_select = game[-1][-1][0]
-                        print(card_select)
+                        card_select1, pos1 = cardclick(mouse_coord, game, last_column)
+                        phase = 2
                     except :
                         pass
 
-                for i in range(int((last_column-400)/85)+1) :
-                    if i*85+400 < mouse_coord[0] < i*85+475 :
-                        j = len(game[i])-1
-                        if j*25+213 < mouse_coord[1] < j*25+326 :
-                            card_select = game[i][-1][0]
-                            print(card_select)
+                if phase == 2 :
+                    card_select2, pos2 = cardclick(mouse_coord, game, last_column)
+                    valid = check_move(card_select1, card_select2, regles)
+                    if valid == True :
+                        print("Valid")
+                    phase = 1
+
+            try :
+                fenetre.blit(dico_images[game[-1][-1][0]], (135,50))
+            except :
+                fenetre.blit(vide, (135,50))
+            try :
+                fenetre.blit(image_select1, (pos1[0], pos1[1]))
+                fenetre.blit(image_select2, (pos2[0], pos2[1]))
+            except :
+                pass
+            
+                    
+                    #phase = 2
+                #if phase == 2 : 
+                    #card_select2, pos = cardclick(mouse_coord, game, last_column)
 
             pygame.display.flip()
             
