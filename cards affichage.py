@@ -56,6 +56,13 @@ def main():
 ##    cartes["V00"] = pygame.image.load("images/carte_vide/V00.png").convert_alpha()
 ##    for i in range(lignes): ## on rajoute la carte vide à la fin de chaque ligne!
 ##        shuffled[i].append("V00") ## On la rajoute ici parce que si on la rajoutais avant, on aurais une carte vide qq part dans le tableau!
+
+
+########## TEST select transparence
+    select1 = pygame.image.load("images/select.png").convert_alpha()
+    select2 = pygame.image.load("images/select2.png").convert_alpha()
+
+##########
                 
 
     mouse_coord = (-1,-1)
@@ -99,11 +106,13 @@ def main():
 
         ## affiche contour carte depart
         if select_depart:
-            pygame.draw.rect(fenetre, (0, 0, 255), ((coord_depart[0] * 80 + 30 , coord_depart[1] * 118 + 30), (75 , 113)), 3)
+            #pygame.draw.rect(fenetre, (0, 0, 255), ((coord_depart[0] * 80 + 30 , coord_depart[1] * 118 + 30), (75 , 113)), 3)
+            fenetre.blit(select1, (coord_depart[0] * 80 + 30 , coord_depart[1] * 118 + 30)) ############TEST select transparence
 
         ## affiche contour emplacement dest
         if select_dest:
-            pygame.draw.rect(fenetre, (255, 255, 0), ((coord_dest[0] * 80 + 30 , coord_dest[1] * 118 + 30), (75 , 113)), 3)
+            #pygame.draw.rect(fenetre, (255, 255, 0), ((coord_dest[0] * 80 + 30 , coord_dest[1] * 118 + 30), (75 , 113)), 3)
+            fenetre.blit(select2, (coord_dest[0] * 80 + 30 , coord_dest[1] * 118 + 30)) #########TEST select transparence
             check = True
             print(shuffled)
 
