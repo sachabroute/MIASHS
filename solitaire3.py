@@ -108,13 +108,13 @@ def main() :
     pygame.display.set_caption("MIASHS")
     fenetre = pygame.display.set_mode((1175, 750))
     fond = pygame.image.load("images/fond/fond.png")
-    dos = pygame.image.load("images/classic/dos/dos4.png")
+    dos = pygame.image.load("images/classic/dos/dos6.png")
     vide = pygame.image.load("images/carte_vide/V00.png")
     image_select1 = pygame.image.load("images/select.png")
     image_select2 = pygame.image.load("images/select2.png")
     image_select_top = pygame.image.load("images/select_top.png")
     nombre_cartes = 13
-    nombre_paquets = 3
+    nombre_paquets = 2
     regles_jeu = [nombre_cartes, "start", "sup", "diff_color", "king"]
     regles_empile = [nombre_cartes, "start", "inf", "same_symbol", "ace"]
     

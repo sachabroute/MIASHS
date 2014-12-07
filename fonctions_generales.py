@@ -60,10 +60,10 @@ def check_move(carte_depart, carte_compare, regles) :
     num_carte_depart = int(carte_depart[1:3])
     type_carte_compare = carte_compare[0]
     num_carte_compare = int(carte_compare[1:3])
-    print(type_carte_depart, num_carte_depart, type_carte_compare, num_carte_compare)
+    #print(type_carte_depart, num_carte_depart, type_carte_compare, num_carte_compare)
     
     compare = ordre_selon_regles.index(num_carte_depart)-ordre_selon_regles.index(num_carte_compare)
-    print(compare)
+    #print(compare)
     corresp_number = {"sup" : [-1], "inf" : [1], "same" : [0], "both" : [-1,1] }
 
     red = ["D", "H"]
