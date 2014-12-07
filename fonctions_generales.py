@@ -17,11 +17,11 @@ def ordre_valeurs(nombre_cartes, place_as) :
     ##La variable place_as permet de définir si le 1 doit se trouver au début ou
     ##à la fin du paquet.
 
-    ordre_valeurs_cartes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 16, 11, 14, 12, 13]
-    ordre_priorite_cartes = [0, 7, 8, 9, 10, 11, 12, 13, 1, 2, 3, 4, 5, 6, 14, 15, 16]
+    ordre_valeurs_cartes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 16, 11, 14, 12, 13]
+    ordre_priorite_cartes = [7, 8, 9, 10, 11, 12, 13, 1, 2, 3, 4, 5, 6, 14, 15, 16]
     ordre_selon_regles = []
 
-    ordre_priorite_cartes = ordre_priorite_cartes[0:nombre_cartes+1]
+    ordre_priorite_cartes = ordre_priorite_cartes[0:nombre_cartes]
 
     for i in range(len(ordre_valeurs_cartes)) :
         if ordre_valeurs_cartes[i] in ordre_priorite_cartes :
@@ -50,13 +50,20 @@ def check_move(carte_depart, carte_compare, regles) :
     valid = False
     
     ordre_selon_regles = ordre_valeurs(regles[0], regles[1])
+
+    if regles[4] == "king" :
+        ordre_selon_regles.append(0)
+    if regles[4] == "ace" :
+        ordre_selon_regles.insert(0, 0)
     
     type_carte_depart = carte_depart[0]
     num_carte_depart = int(carte_depart[1:3])
     type_carte_compare = carte_compare[0]
     num_carte_compare = int(carte_compare[1:3])
+    print(type_carte_depart, num_carte_depart, type_carte_compare, num_carte_compare)
     
     compare = ordre_selon_regles.index(num_carte_depart)-ordre_selon_regles.index(num_carte_compare)
+    print(compare)
     corresp_number = {"sup" : [-1], "inf" : [1], "same" : [0], "both" : [-1,1] }
 
     red = ["D", "H"]
@@ -73,7 +80,7 @@ def check_move(carte_depart, carte_compare, regles) :
     if compare in corresp_number[regles[2]] :
         valid_number = True
 
-    if type_carte_compare in corresp_color[regles[3]] or type_carte_compare == ["V"] :
+    if type_carte_compare in corresp_color[regles[3]] or type_carte_compare == "V" :
         valid_color = True
 
     if valid_number == True and valid_color == True :
