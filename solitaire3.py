@@ -113,8 +113,8 @@ def main() :
     image_select1 = pygame.image.load("images/select.png")
     image_select2 = pygame.image.load("images/select2.png")
     image_select_top = pygame.image.load("images/select_top.png")
-    nombre_cartes = 13
-    nombre_paquets = 2
+    nombre_cartes = 16
+    nombre_paquets = 4
     regles_jeu = [nombre_cartes, "start", "sup", "diff_color", "king"]
     regles_empile = [nombre_cartes, "start", "inf", "same_symbol", "ace"]
     
@@ -131,6 +131,8 @@ def main() :
     card_select2 = ""
     rectoverso = 0
     tomove = []
+    cardplace1 = []
+    cardplace2 = []
 
     while True:        
         for event in pygame.event.get():
@@ -206,6 +208,10 @@ def main() :
                         game[-2] = game[-1]
                         game[-1] = []
 
+                    card_select1 = ""
+                    pos1 = []
+                    cardplace1 = []
+
                     ##Affichage d'une carte vide si la pioche cachée est vide
                     if game[-2] == [] :
                         fenetre.blit(vide, (50,50))
@@ -223,7 +229,9 @@ def main() :
                         if rectoverso == 1 :
                             game[cardplace1[0]][cardplace1[1]][1] = 1
                     except :
-                        pass
+                        card_select1 = ""
+                        pos1 = []
+                        cardplace1 = []
 
                 ##Si une carte est déjà sélectionnée
                 else :
@@ -242,35 +250,48 @@ def main() :
                         except :
                             pass
 
-                    ##Si oui, le mouvement est validé
-                    if valid == True :
-                        tomove = game[cardplace1[0]][cardplace1[1]:]
-                        tomove.reverse()
-                        for i in range(len(tomove)) :
-                            game[cardplace2[0]].append(tomove[-1])
-                            tomove.pop()
-                            game[cardplace1[0]].pop()
-                        valid = False
+                    if card_select1 == card_select2 :
                         card_select1 = ""
                         card_select2 = ""
                         pos1 = []
                         pos2 = []
+                        cardplace1 = []
+                        cardplace2 = []
 
-                    ##Sinon, la deuxième carte devient la carte sélectionnée
-                    else :
-                        card_select1 = card_select2
-                        pos1 = pos2
-                        card_select2 = 0
+                    ##Si oui, le mouvement est validé
+                    if not card_select1 == "" and not card_select2 == "" :
+                        
+                        if valid == True and card_place2[0] < len(game)-2 :
+                            tomove = game[cardplace1[0]][cardplace1[1]:]
+                            tomove.reverse()
+                            for i in range(len(tomove)) :
+                                game[cardplace2[0]].append(tomove[-1])
+                                tomove.pop()
+                                game[cardplace1[0]].pop()
+                            valid = False
+                            card_select1 = ""
+                            cardplace1 = []
+                            pos1 = []
+
+                        ##Sinon, la deuxième carte devient la carte sélectionnée
+                        else :
+                            card_select1 = card_select2
+                            pos1 = pos2
+                            cardplace1 = cardplace2
+                            
+                        card_select2 = ""
                         pos2 = []
+                        cardplace2 = []
                         
                 ##Si la carte sélectionnée est une carte vide (dans l'arrivée), alors on ne sélectionne rien
                 if card_select1 == "V00.png" :
                     card_select1 = ""
                     pos1 = []
+                    cardplace1 = []
                     
             if event.type == KEYDOWN and event.key == K_q :
-                print(card_select1, card_select2)
-                print(cardplace1, cardplace2)
+                print("Carte 1 :", card_select1, "/", cardplace1)
+                print("Carte 2 :", card_select2, "/", cardplace2)
             if event.type == KEYDOWN and event.key == K_g :
                 print("Tableau, ligne 1 :", game[0])
                 print("Tableau, ligne 2 :", game[1])
