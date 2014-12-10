@@ -103,6 +103,7 @@ def main():
         for y in range(lignes):
             for x in range(colonnes + 1): # + 1 pour rajouter la carte vide à la fin de chaque ligne
                 fenetre.blit(cartes[shuffled[y][x]], (x * 80 + 30 , y * 118 + 30))
+##        print(shuffled)
 
         ## affiche contour carte depart
         if select_depart:

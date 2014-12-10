@@ -21,7 +21,7 @@ def main():
     fenetre = pygame.display.set_mode((60+(regles+1)*80, 750))
     
     ##Chargement des cartes
-    liste_images_brutes = os.listdir("images/simpsons/cartes/") ##Insère toutes les images du répertoire dans une liste
+    liste_images_brutes = os.listdir("images/pokemon/cartes/") ##Insère toutes les images du répertoire dans une liste
     liste_images_regles = [] ##Nouvelle liste qui contiendra uniquement les images de jeu
 
     ##Boucle supprimant les cartes cavalier si égal à 13
@@ -41,7 +41,7 @@ def main():
     
     for i in range(nombre_cartes):
         indice = liste_images_regles[i].split(".")[0] ## correspond au nom de chaque carte. on split pour enlever le '.png', on se retrouve avec 'C01', 'C02', etc...
-        cartes["%s" %(indice)] = pygame.image.load("images/simpsons/cartes/"+liste_images_regles[i]).convert_alpha()
+        cartes["%s" %(indice)] = pygame.image.load("images/pokemon/cartes/"+liste_images_regles[i]).convert_alpha()
     #### end load images (wouaaah c'est super court t'as vu!??)
 
 
@@ -53,7 +53,7 @@ def main():
     poubelle_cartes = []
 
     ## le dos des cartes (pour la pioche), carte vide
-    dos = pygame.image.load("images/simpsons/dos/dos.png").convert_alpha()
+    dos = pygame.image.load("images/pokemon/dos/dos.png").convert_alpha()
     cartes["V00"] = pygame.image.load("images/carte_vide/V00.png").convert_alpha()
     carte_pioche = "V00"
     

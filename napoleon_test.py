@@ -63,6 +63,11 @@ def main():
     select2 = pygame.image.load("images/select2.png").convert_alpha()
 
 ##########
+
+########## TEST options
+    options = pygame.image.load("images/rouage.png").convert_alpha()
+    F_long, F_larg = 60+(regles+1)*80, 750
+##########
                 
 
     mouse_coord = (-1,-1)
@@ -94,10 +99,15 @@ def main():
                 elif select_dest == False and 0 <= mouse_coord[0] < colonnes + 1 and 0 <= mouse_coord[1] < lignes and shuffled[mouse_coord[1]][mouse_coord[0]] == "V00": ## pour la position de destination
                     coord_dest = mouse_coord
                     select_dest = True
+                elif F_long - 35 <= mouse_coord[0] <= F_long - 35 + 30 and 5 <= mouse_coord[1] <= 5 + 30:
+                    options()
 
 
         ## affiche fond
         fenetre.blit(fond, (0,0))
+
+################ AFFICHE test options
+        fenetre.blit(options, (F_long - 35, 5))
         
         ## affiche cartes
         for y in range(lignes):
@@ -175,6 +185,12 @@ def check_end(shuffled, lignes, colonnes):
                 return(False)
 
     return(True)
+
+def options():
+
+    cartes_1 =
+    cartes_2 =
+    cartes_3 =
             
 
 
