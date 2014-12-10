@@ -5,23 +5,10 @@ import os
 import time
 from random import *
 
+def chargement_images(type_cartes, regles):
 
-def main():
-    pygame.init()
-    pygame.display.set_caption("MIASHS")
-    fenetre = pygame.display.set_mode((1175, 750))
-
-    ##Chargement des images
-    fond = pygame.image.load("images/fond/fond.png")
-
-    options = pygame.image.load("images/rouage.png")
-
-    ##Définition des règles
-    regles = 13 ##Est égal à 13 ou 14
-    fenetre = pygame.display.set_mode((60+(regles+1)*80, 750))
-    
     ##Chargement des cartes
-    liste_images_brutes = os.listdir("images/pokemon/cartes/") ##Insère toutes les images du répertoire dans une liste
+    liste_images_brutes = os.listdir("images/" + type_cartes + "/cartes/") ##Insère toutes les images du répertoire dans une liste
     liste_images_regles = [] ##Nouvelle liste qui contiendra uniquement les images de jeu
 
     ##Boucle supprimant les cartes cavalier si égal à 13
@@ -33,15 +20,48 @@ def main():
 
     ##Fin du chargement des images
     nombre_cartes = int(len(liste_images_regles)) ##Définit le nombre de cartes à partir de la taille de la liste
+    
+    return(liste_images_regles, nombre_cartes)
 
+def taille_jeu(regles):
+
+    if regles == 13:
+        lignes = 5
+        colonnes = 7
+    else:
+        lignes = 5
+        colonnes = 7
+
+    return(lignes, colonnes)
+
+
+
+def main():
+    pygame.init()
+    pygame.display.set_caption("MIASHS")
+
+    ##Chargement des images
+    fond = pygame.image.load("images/fond/fond.png")
+
+    options = pygame.image.load("images/rouage.png")
+
+    ##Définition des règles
+    regles = 13 ##Est égal à 13 ou 14
+    type_cartes = 'pokemon'
 ## a voir si on peut changer les lignes et colonnes par la suite
-    lignes = 5
-    colonnes = 7
+    lignes, colonnes = taille_jeu(regles)
+##    fenetre = pygame.display.set_mode((60+(regles+1)*80, 750))
+    fenetre = pygame.display.set_mode((80+(colonnes*75)+((colonnes-1)*45)+80, 750))
+    
+    ##chargement des cartes
+    liste_images_regles, nombre_cartes = chargement_images(type_cartes, regles)
+
+
     cartes = {} ## initialisation biblioteque vide
     
     for i in range(nombre_cartes):
         indice = liste_images_regles[i].split(".")[0] ## correspond au nom de chaque carte. on split pour enlever le '.png', on se retrouve avec 'C01', 'C02', etc...
-        cartes["%s" %(indice)] = pygame.image.load("images/pokemon/cartes/"+liste_images_regles[i]).convert_alpha()
+        cartes["%s" %(indice)] = pygame.image.load("images/" + type_cartes + "/cartes/"+liste_images_regles[i]).convert_alpha()
     #### end load images (wouaaah c'est super court t'as vu!??)
 
 
@@ -53,7 +73,7 @@ def main():
     poubelle_cartes = []
 
     ## le dos des cartes (pour la pioche), carte vide
-    dos = pygame.image.load("images/pokemon/dos/dos.png").convert_alpha()
+    dos = pygame.image.load("images/" + type_cartes + "/dos/dos.png").convert_alpha()
     cartes["V00"] = pygame.image.load("images/carte_vide/V00.png").convert_alpha()
     carte_pioche = "V00"
     
@@ -79,10 +99,7 @@ def main():
                     select_card = True
 
                 elif click_type == "pioche":
-                    try:
-                        carte_pioche = pioche_cartes.pop()
-                    except IndexError:
-                        end_game('loss')
+                    carte_pioche = pioche_cartes.pop()
 
         ## affiche fond
         fenetre.blit(fond, (0,0))
@@ -116,6 +133,8 @@ def main():
         ##ENDGAME
         if tableau_cartes == []:
             end_game('win')
+        elif pioche_cartes == []:
+            end_game('loss')
         
         ##reset variables
         mouse_coord = (-1,-1)
