@@ -5,6 +5,7 @@ import os
 import time
 from random import *
 
+
 def chargement_images(type_cartes, regles):
 
     ##Chargement des cartes
