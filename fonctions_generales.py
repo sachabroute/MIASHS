@@ -111,7 +111,7 @@ def generation_jeu_aleatoire(repertoire_cartes, nombre_cartes, nombre_paquets) :
     return(liste_images_regles)
 
 #### soit je ne comprends pas ta fonction au dessus, soit il y a des erreurs.
-#### en tout cas voici la fonction que j'utilise dans mes jeux (en bas)
+#### en tout cas voici la fonction que j'utilise dans mes jeux (en dessous)
 #### qui semble fonctionner
 
 def chargement_images(type_cartes, regles):
@@ -136,7 +136,6 @@ def chargement_images(type_cartes, regles):
 
 
 
-#### cette fonction en dessous est inutile si on a la fonction de dessus. je me trompe?
 
 def images(repertoire_cartes) :
     os.chdir(repertoire_cartes)

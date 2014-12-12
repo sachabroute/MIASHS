@@ -101,12 +101,14 @@ def main():
 
     lignes = 4
     colonnes = int(nombre_cartes / lignes)
+
     cartes = {} ## initialisation biblioteque vide
     
     for i in range(nombre_cartes):
         indice = liste_images_regles[i].split(".")[0] ## correspond au nom de chaque carte. on split pour enlever le '.png', on se retrouve avec 'C01', 'C02', etc...
         cartes["%s" %(indice)] = pygame.image.load("images/" + type_cartes + "/cartes/"+liste_images_regles[i]).convert_alpha()
     #### end load images (wouaaah c'est super court t'as vu!??)
+
 
     ## creation d'une liste de base, et melange de cartes
     liste_cartes = [name for name in cartes] ## prends chaque nom de cartes dans la biblioteque
