@@ -221,6 +221,7 @@ def check_end(shuffled, lignes, colonnes, regles):
     
     for y in range(lignes):
         for x in range(colonnes - 1): # -1 pour pouvoir comparer un a un
+            print(num1,' ',num2)
             num1 = ordre_selon_regles.index(int(shuffled[y][x][1:]))
             num2 = ordre_selon_regles.index(int(shuffled[y][x+1][1:]))
             type1 = shuffled[y][x][0]
