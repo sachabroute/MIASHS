@@ -92,7 +92,7 @@ def main():
     options = pygame.image.load("images/rouage.png")
 
     ##Définition des règles
-    regles = 7 ##Est égal à 13 ou 14
+    regles = 13 ##Est égal à 13 ou 14
     type_cartes = 'simpsons'
     fenetre = pygame.display.set_mode((60+(regles+1)*80, 750))
 
@@ -227,6 +227,9 @@ def check_move(shuffled, move_from, move_to, regles):
             valid = True
     elif move_to[0] == 0 and num_carte_depart == 1 and shuffled[move_to[1]][move_to[0]] == "V00":
         valid = True
+    ## si regles == 7, il n'y a pas d'as, donc le jeu commence avec le 7
+    elif regles == 7 and move_to[0] == 0 and num_carte_depart == 7 and shuffled[move_to[1]][move_to[0]] == "V00":
+        valid = True
 
     return(valid)
 
@@ -244,8 +247,15 @@ def check_end(shuffled, lignes, colonnes, regles): #### A VERIFIER
         
     for y in range(lignes):
         for x in range(colonnes - 1): # -1 pour pouvoir comparer un a un
-            num1 = ordre.index(int(shuffled[y][x][1:]))
-            num2 = ordre.index(int(shuffled[y][x+1][1:]))
+##            les try except permettent d'eliminer l'erreur ou il regarde les cases vides (parce que num_casesvides = 0 et 0 pas dans ordre)
+            try:
+                num1 = ordre.index(int(shuffled[y][x][1:]))
+            except ValueError:
+                num1 = -1
+            try:
+                num2 = ordre.index(int(shuffled[y][x+1][1:]))
+            except ValueError:
+                num2 = -1
             type1 = shuffled[y][x][0]
             type2 = shuffled[y][x+1][0]
             if not (type1 == type2 and (num1 + 1) == num2):

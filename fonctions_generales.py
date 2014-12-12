@@ -110,6 +110,34 @@ def generation_jeu_aleatoire(repertoire_cartes, nombre_cartes, nombre_paquets) :
 
     return(liste_images_regles)
 
+#### soit je ne comprends pas ta fonction au dessus, soit il y a des erreurs.
+#### en tout cas voici la fonction que j'utilise dans mes jeux (en bas)
+#### qui semble fonctionner
+
+def chargement_images(type_cartes, regles):
+
+    ordre = ordre_valeurs(regles, "start")
+
+    ##Chargement des cartes
+    liste_images_brutes = os.listdir("images/" + type_cartes + "/cartes/") ##Insère toutes les images du répertoire dans une liste
+    liste_images_regles = [] ##Nouvelle liste qui contiendra uniquement les images de jeu
+
+    ##Boucle supprimant les cartes cavalier si égal à 13
+    for i in range(len(liste_images_brutes)) :
+        cardsplit = liste_images_brutes[i] #On prend du caractère [1] au caractère [2] pour avoir le numéro de carte.
+        cardnumber = cardsplit[1:3]
+        if int(cardnumber) in ordre : ##Si ce numéro est inférieur au nombre dans règles, alors on append, sinon rien.
+            liste_images_regles.append(liste_images_brutes[i])
+
+    ##Fin du chargement des images
+    nombre_cartes = int(len(liste_images_regles)) ##Définit le nombre de cartes à partir de la taille de la liste
+    
+    return(liste_images_regles, nombre_cartes)
+
+
+
+#### cette fonction en dessous est inutile si on a la fonction de dessus. je me trompe?
+
 def images(repertoire_cartes) :
     os.chdir(repertoire_cartes)
     liste_images_brutes = os.listdir()
