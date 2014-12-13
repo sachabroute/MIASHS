@@ -89,7 +89,7 @@ def main():
     ##Chargement des images
     fond = pygame.image.load("images/fond/fond.png")
 
-    options = pygame.image.load("images/rouage.png")
+    #options = pygame.image.load("images/rouage.png")
 
     ##Définition des règles
     regles = 13 ##Est égal à 13 ou 14
