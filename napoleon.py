@@ -112,6 +112,7 @@ def napoleon(type_cartes, taille_jeu):
     options = pygame.image.load("images/options/rouage.png")
     options_select = pygame.image.load("images/options/rouage_select.png")
 
+
     ##Définition des règles
     regles = int(taille_jeu / 4)
     fenetreX, fenetreY = (80+(regles+1)*80, 750)
