@@ -4,6 +4,7 @@ import sys
 import os
 import time
 from random import *
+import game_options
 
 def ordre_valeurs(nombre_cartes, place_as):
     ##Renvoie automatiquement une liste d'ordre des valeurs, selon le nombre de
@@ -51,7 +52,26 @@ def chargement_images(type_cartes, regles):
     
     return(liste_images_regles, nombre_cartes)
 
-def taille_jeu(regles):
+def chargement_dico(type_cartes, regles):
+
+    ##chargement des cartes
+    liste_images_regles, nombre_cartes = chargement_images(type_cartes, regles)
+    
+    cartes = {} ## initialisation biblioteque vide
+    
+    for i in range(nombre_cartes):
+        indice = liste_images_regles[i].split(".")[0] ## correspond au nom de chaque carte. on split pour enlever le '.png', on se retrouve avec 'C01', 'C02', etc...
+        cartes["%s" %(indice)] = pygame.image.load("images/" + type_cartes + "/cartes/"+liste_images_regles[i]).convert_alpha()
+    #### end load images (wouaaah c'est super court t'as vu!??)
+
+    return(cartes)
+
+def rajoute_carte_vide(cartes):
+    cartes["V00"] = pygame.image.load("images/carte_vide/V00.png").convert_alpha()
+    return(cartes)
+    
+
+def taille_golf(regles):
 
     if regles == 13:
         colonnes = 7
@@ -83,27 +103,21 @@ def main():
     ##Chargement des images
     fond = pygame.image.load("images/fond/fond.png")
 
-    options = pygame.image.load("images/rouage.png")
+    options = pygame.image.load("images/options/rouage.png")
+    options_select = pygame.image.load("images/options/rouage_select.png")
 
     ##Définition des règles
 ##    regles = 13 ##Est égal à 13 ou 14
     regles = int(input("entrer taille (7,8,13,14,16): "))
-    type_cartes = 'simpsons2'
+    type_cartes = 'simpsons'
+    taille_jeu = regles * 4
 ## a voir si on peut changer les lignes et colonnes par la suite
-    lignes, colonnes = taille_jeu(regles)
+    lignes, colonnes = taille_golf(regles)
 ##    fenetre = pygame.display.set_mode((60+(regles+1)*80, 750))
-    fenetre = pygame.display.set_mode((80+(colonnes*75)+((colonnes-1)*45)+80, 750))
+    fenetreX, fenetreY = 80+(colonnes*75)+((colonnes-1)*45)+80, 750
+    fenetre = pygame.display.set_mode((fenetreX, fenetreY))
     
-    ##chargement des cartes
-    liste_images_regles, nombre_cartes = chargement_images(type_cartes, regles)
-
-
-    cartes = {} ## initialisation biblioteque vide
-    
-    for i in range(nombre_cartes):
-        indice = liste_images_regles[i].split(".")[0] ## correspond au nom de chaque carte. on split pour enlever le '.png', on se retrouve avec 'C01', 'C02', etc...
-        cartes["%s" %(indice)] = pygame.image.load("images/" + type_cartes + "/cartes/"+liste_images_regles[i]).convert_alpha()
-    #### end load images (wouaaah c'est super court t'as vu!??)
+    cartes = chargement_dico(type_cartes, regles)
 
 
     ## creation d'une liste de base, et melange de cartes
@@ -115,39 +129,50 @@ def main():
 
     ## le dos des cartes (pour la pioche), carte vide
     dos = pygame.image.load("images/" + type_cartes + "/dos/dos.png").convert_alpha()
-    cartes["V00"] = pygame.image.load("images/carte_vide/V00.png").convert_alpha()
+    cartes = rajoute_carte_vide(cartes)
     carte_pioche = "V00"
     
 
-    mouse_coord = (-1,-1)
+    mouseX, mouseY = (-1,-1)
     select_card = False
     coord_card = (-1,-1)
     pioche = False
 
 
-    while True:        
+    while True:
+        mouseX, mouseY = pygame.mouse.get_pos()
         for event in pygame.event.get():
             
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                 pygame.quit()
                 sys.exit()
 
-            if event.type == MOUSEBUTTONDOWN:
-                mouse_coord = pygame.mouse.get_pos()
-                click_type, ind = check_mouse(mouse_coord, tableau_cartes, len(pioche_cartes), colonnes)
+            elif event.type == MOUSEBUTTONDOWN:
+                click_type, ind = check_mouse((mouseX, mouseY), tableau_cartes, len(pioche_cartes), colonnes, (fenetreX, fenetreY))
                 if click_type == "cartes" and carte_pioche != "V00":
-                    coord_card = (mouse_coord[0] - 80) // 120, len(tableau_cartes[ind]) - 1
+                    coord_card = (mouseX - 80) // 120, len(tableau_cartes[ind]) - 1
                     select_card = True
-
                 elif click_type == "pioche":
                     carte_pioche = pioche_cartes.pop()
+                elif click_type == "options":
+                    type_cartes, taille_jeu = game_options.options(fenetre, type_cartes, taille_jeu)
+                    cartes = chargement_dico(type_cartes, regles)
+                    cartes = rajoute_carte_vide(cartes)
 
-            if event.type == KEYDOWN:
+            elif event.type == KEYDOWN:
                 if event.key == K_p:
                     print(ordre_valeurs(regles, "start"))
+                elif event.key == K_o:
+                    type_cartes, taille_jeu = game_options.options(fenetre, type_cartes, taille_jeu)
 
         ## affiche fond
         fenetre.blit(fond, (0,0))
+
+        ## affiche rouage options
+        fenetre.blit(options, (fenetreX - 50, 15))
+        ## affiche rouage selectionne
+        if fenetreX - 50 <= mouseX <= fenetreX - 20 and 15 <= mouseY <= 45:
+            fenetre.blit(options_select, (fenetreX - 50, 15))
         
         ## affiche cartes
         for x in range(colonnes):
@@ -200,7 +225,7 @@ def main():
                     
         
         ##reset variables
-        mouse_coord = (-1,-1)
+        mouseX, mouseY = (-1,-1)
 
 
 def check_move(tableau_cartes, carte_pioche, coord_card, regles):
@@ -223,7 +248,7 @@ def check_move(tableau_cartes, carte_pioche, coord_card, regles):
     return(valid)
 
 
-def check_mouse(mouse, tableau_cartes, nbre_pioche, colonnes):
+def check_mouse(mouse, tableau_cartes, nbre_pioche, colonnes, screen_size):
 
     for i in range(colonnes):
         if len(tableau_cartes[i]) > 0:
@@ -232,12 +257,15 @@ def check_mouse(mouse, tableau_cartes, nbre_pioche, colonnes):
 
     if 80 <= mouse[0] < (nbre_pioche * 5) + 80 + 75 and 400 <= mouse[1] < 400 + 118:
         return("pioche",'')
+    elif screen_size[0] - 50 <= mouse[0] <= screen_size[0] - 20 and 15 <= mouse[1] <= 45:
+        return("options",'')
 
     return('','')
 
 def end_game(outcome):
     print(outcome)
     sys.exit()
+    pygame.quit()
     
 
 

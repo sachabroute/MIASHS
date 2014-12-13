@@ -6,16 +6,18 @@ import time
 from random import *
 
 def main():
-    options((1020, 720))
+    type_jeu, taille_jeu = options((1020, 720))
 
-def options(taille_fenetre):
-    pygame.init()
-    pygame.display.set_caption("MIASHS")
-
-    fenetre = pygame.display.set_mode(taille_fenetre)
+def options(fenetre, type_jeu, taille_jeu):
+##    pygame.init()
+##    pygame.display.set_caption("MIASHS")
+##
+##    fenetre = pygame.display.set_mode(taille_fenetre)
 
     fond = pygame.image.load("images/fond/fond.png")
 
+    retour = pygame.image.load("images/options/retour.png")
+    retour_select = pygame.image.load("images/options/retour_select.png")
 
     nombre_cartes = 7 #### 7 pour que ca montre pas toutes les cartes sinon c'est chiant
     type_cartes = 'simpsons'
@@ -38,11 +40,12 @@ def options(taille_fenetre):
 
     myfont = pygame.font.SysFont("monospace", 30)
     myfont2 = pygame.font.SysFont("monospace", 20)
-    type_jeu = 'simpsons'
-    taille_jeu = 28
 
 
-    while True:        
+    while True:
+
+        mouseX, mouseY = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]
+
         for event in pygame.event.get():
             
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
@@ -50,7 +53,6 @@ def options(taille_fenetre):
                 sys.exit()
                 
             elif event.type == MOUSEBUTTONDOWN:
-                mouseX, mouseY = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]
                 ## pour le type de jeu
                 if 20 <= mouseX <= 20 + 560 and 35 <= mouseY <= 35 + 140:
                     type_jeu = 'simpsons'
@@ -69,13 +71,22 @@ def options(taille_fenetre):
                     taille_jeu = 56
                 elif 260 <= mouseX <= 280 and 620 <= mouseY <= 640:
                     taille_jeu = 64
+                ## pour la fleche retour
+                elif 600 <= mouseX <= 650 and 20 <= mouseY <= 70:
+                    return(type_jeu, taille_jeu)
 
             elif event.type == KEYDOWN:
                 if event.key == K_o:
                     return
                 
-
+## Affiche le fond
         fenetre.blit(fond, (0,0))
+
+## Affiche le fleche de retour
+        fenetre.blit(retour, (600, 10))
+## Affiche si la souris est au dessus de la fleche
+        if 600 <= mouseX <= 650 and 20 <= mouseY <= 70:
+            fenetre.blit(retour_select, (600, 10))
         
 ## Affiche les jeux de cartes
         count = 0
