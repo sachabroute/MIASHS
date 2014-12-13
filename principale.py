@@ -3,7 +3,7 @@ from pygame.locals import *
 import sys
 import napoleon
 import golf_solitaire as golf
-import solitaire3 as solitaire
+import solitaire
 
 pygame.init()
 pygame.display.set_caption("MIASHS")
