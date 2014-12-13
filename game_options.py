@@ -17,8 +17,10 @@ def options(fenetre, type_jeu, taille_jeu, game_started):
 ##    pygame.display.set_caption("MIASHS")
 ##
 ##    fenetre = pygame.display.set_mode(taille_fenetre)
+    fenetreX, fenetreY = fenetre.get_size()
 
     fond = pygame.image.load("images/fond/fond.png")
+    fond = pygame.transform.scale(fond, (fenetreX, fenetreY))
 
     retour = pygame.image.load("images/options/retour.png")
     retour_select = pygame.image.load("images/options/retour_select.png")
