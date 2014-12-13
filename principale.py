@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *
 import sys
 import napoleon
-import golf_solitaire as golf
+import golf
 import solitaire
 
 pygame.init()
