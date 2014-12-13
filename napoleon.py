@@ -5,101 +5,7 @@ import os
 import time
 from random import *
 import game_options
-
-
-
-def cheat_ordonne(shuffled, lignes, colonnes):
-    ordered = [[],[],[],[]]
-    indice_vide = 0
-    for y in range(lignes):
-        for x in range(colonnes + 1):
-            if shuffled[y][x][0] == "C":
-                ordered[0].append(shuffled[y][x])
-            elif shuffled[y][x][0] == "D":
-                ordered[1].append(shuffled[y][x])
-            elif shuffled[y][x][0] == "H":
-                ordered[2].append(shuffled[y][x])
-            elif shuffled[y][x][0] == "S":
-                ordered[3].append(shuffled[y][x])
-            elif shuffled[y][x][0] == "V":
-                ordered[indice_vide].append(shuffled[y][x])
-                indice_vide += 1
-
-
-                
-    ordered[0].sort()
-    ordered[1].sort()
-    ordered[2].sort()
-    ordered[3].sort()
-    
-    return(ordered)
-
-
-def ordre_valeurs(nombre_cartes, place_as):
-    ##Renvoie automatiquement une liste d'ordre des valeurs, selon le nombre de
-    ##cartes dans les règles. Fonctionne pour nombre_cartes = 7, 8, 13, 14 et 16 :
-    ##Jeu de 28 cartes (4*7) : 7, 8, 9, 10, J, Q, K
-    ##Jeu de 32 cartes (4*8) : 1, 7, 8, 9, 10, J, Q, K
-    ##Jeu de 52 cartes (4*13) : 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, J, Q, K
-    ##Jeu de 56 cartes (4*14) : 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, J, C, Q, K
-    ##Jeu de 64 cartes (4*16) : 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, J, C, Q, K
-    ##La variable place_as permet de définir si le 1 doit se trouver au début ou
-    ##à la fin du paquet.
-
-    ordre_valeurs_cartes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 16, 11, 14, 12, 13]
-    ordre_priorite_cartes = [7, 8, 9, 10, 11, 12, 13, 1, 2, 3, 4, 5, 6, 14, 15, 16]
-    ordre_selon_regles = []
-
-    ordre_priorite_cartes = ordre_priorite_cartes[0:nombre_cartes]
-
-    for i in range(len(ordre_valeurs_cartes)) :
-        if ordre_valeurs_cartes[i] in ordre_priorite_cartes :
-            ordre_selon_regles.append(ordre_valeurs_cartes[i])
-
-    if 1 in ordre_selon_regles and place_as == "end" :
-        ordre_selon_regles.insert(nombre_cartes-1, ordre_selon_regles.pop(0))
-        
-    return(ordre_selon_regles)
-
-
-def chargement_images(type_cartes, regles):
-
-    ordre = ordre_valeurs(regles, "start")
-
-    ##Chargement des cartes
-    liste_images_brutes = os.listdir("images/" + type_cartes + "/cartes/") ##Insère toutes les images du répertoire dans une liste
-    liste_images_regles = [] ##Nouvelle liste qui contiendra uniquement les images de jeu
-
-    ##Boucle supprimant les cartes cavalier si égal à 13
-    for i in range(len(liste_images_brutes)) :
-        cardsplit = liste_images_brutes[i] #On prend du caractère [1] au caractère [2] pour avoir le numéro de carte.
-        cardnumber = cardsplit[1:3]
-        if int(cardnumber) in ordre : ##Si ce numéro est inférieur au nombre dans règles, alors on append, sinon rien.
-            liste_images_regles.append(liste_images_brutes[i])
-
-    ##Fin du chargement des images
-    nombre_cartes = int(len(liste_images_regles)) ##Définit le nombre de cartes à partir de la taille de la liste
-    
-    return(liste_images_regles, nombre_cartes)
-
-
-def chargement_dico(type_cartes, regles):
-
-    ##chargement des cartes
-    liste_images_regles, nombre_cartes = chargement_images(type_cartes, regles)
-    
-    cartes = {} ## initialisation biblioteque vide
-    
-    for i in range(nombre_cartes):
-        indice = liste_images_regles[i].split(".")[0] ## correspond au nom de chaque carte. on split pour enlever le '.png', on se retrouve avec 'C01', 'C02', etc...
-        cartes["%s" %(indice)] = pygame.image.load("images/" + type_cartes + "/cartes/"+liste_images_regles[i]).convert_alpha()
-    #### end load images (wouaaah c'est super court t'as vu!??)
-
-    return(cartes)
-
-def rajoute_carte_vide(cartes):
-    cartes["V00"] = pygame.image.load("images/carte_vide/V00.png").convert_alpha()
-    return(cartes)
+import fonctions_generales_sacha as fonctions_generales
 
 
 def napoleon(type_cartes, taille_jeu):
@@ -161,6 +67,7 @@ def napoleon(type_cartes, taille_jeu):
     game_started = False ## devient true quand l'utilisateur commence a jouer! (utilise pour les options)
     allow_redo = False ## permet de limiter le nombre de 'redo's de l'utilisateur a une fois
     redo = False ## si l'utilisateur veux revenir en arriere d'un mouvement
+    regles_jeu = [regles, "start", "sup", "same_symbol", "ace on empty"]
 
     while True:
         mouseX, mouseY = pygame.mouse.get_pos()
@@ -247,7 +154,10 @@ def napoleon(type_cartes, taille_jeu):
         pygame.display.flip()
 
         if select_dest:
-            if check_move(shuffled, coord_depart, coord_dest, regles):
+            carte_depart = shuffled[coord_depart[1]][coord_depart[0]]
+            carte_compare = shuffled[coord_dest[1]][coord_dest[0]-1]
+            regles_jeu[4] = coord_dest[0]
+            if fonctions_generales.check_move(carte_depart, carte_compare, regles_jeu):
                 memory_card = shuffled[coord_depart[1]][coord_depart[0]]
                 memory_coorddepart = coord_depart
                 memory_coorddest = coord_dest
@@ -266,36 +176,73 @@ def napoleon(type_cartes, taille_jeu):
         
         ##resest variables
         tableauX, tableauY = (-1,-1)
-        
 
-def check_move(shuffled, move_from, move_to, regles):
 
-    ordre = ordre_valeurs(regles, "start")
+def cheat_ordonne(shuffled, lignes, colonnes):
+    ordered = [[],[],[],[]]
+    indice_vide = 0
+    for y in range(lignes):
+        for x in range(colonnes + 1):
+            if shuffled[y][x][0] == "C":
+                ordered[0].append(shuffled[y][x])
+            elif shuffled[y][x][0] == "D":
+                ordered[1].append(shuffled[y][x])
+            elif shuffled[y][x][0] == "H":
+                ordered[2].append(shuffled[y][x])
+            elif shuffled[y][x][0] == "S":
+                ordered[3].append(shuffled[y][x])
+            elif shuffled[y][x][0] == "V":
+                ordered[indice_vide].append(shuffled[y][x])
+                indice_vide += 1
 
-    valid = False
+
+                
+    ordered[0].sort()
+    ordered[1].sort()
+    ordered[2].sort()
+    ordered[3].sort()
     
-    type_carte_depart = shuffled[move_from[1]][move_from[0]][0]
-    num_carte_depart = int(shuffled[move_from[1]][move_from[0]][1:3])
+    return(ordered)
 
-    ## les variables compare correspondent à la carte juste avant l'emplacement d'arrivee dans une meme ligne
-    type_carte_compare = shuffled[move_to[1]][move_to[0] - 1][0]
-    num_carte_compare = int(shuffled[move_to[1]][move_to[0] - 1][1:3])
+
+def chargement_images(type_cartes, regles):
+
+    ordre = fonctions_generales.ordre_valeurs(regles, "start")
+
+    ##Chargement des cartes
+    liste_images_brutes = os.listdir("images/" + type_cartes + "/cartes/") ##Insère toutes les images du répertoire dans une liste
+    liste_images_regles = [] ##Nouvelle liste qui contiendra uniquement les images de jeu
+
+    ##Boucle supprimant les cartes cavalier si égal à 13
+    for i in range(len(liste_images_brutes)) :
+        cardsplit = liste_images_brutes[i] #On prend du caractère [1] au caractère [2] pour avoir le numéro de carte.
+        cardnumber = cardsplit[1:3]
+        if int(cardnumber) in ordre : ##Si ce numéro est inférieur au nombre dans règles, alors on append, sinon rien.
+            liste_images_regles.append(liste_images_brutes[i])
+
+    ##Fin du chargement des images
+    nombre_cartes = int(len(liste_images_regles)) ##Définit le nombre de cartes à partir de la taille de la liste
     
-    try:
-        compare = ordre.index(num_carte_depart) - ordre.index(num_carte_compare)
-    except ValueError:
-        compare = -1
+    return(liste_images_regles, nombre_cartes)
 
-    if move_to[0] > 0 and shuffled[move_to[1]][move_to[0]] == "V00":
-        if type_carte_depart == type_carte_compare and compare == 1:
-            valid = True
-    elif move_to[0] == 0 and num_carte_depart == 1 and shuffled[move_to[1]][move_to[0]] == "V00":
-        valid = True
-    ## si regles == 7, il n'y a pas d'as, donc le jeu commence avec le 7
-    elif regles == 7 and move_to[0] == 0 and num_carte_depart == 7 and shuffled[move_to[1]][move_to[0]] == "V00":
-        valid = True
 
-    return(valid)
+def chargement_dico(type_cartes, regles):
+
+    ##chargement des cartes
+    liste_images_regles, nombre_cartes = chargement_images(type_cartes, regles)
+    
+    cartes = {} ## initialisation biblioteque vide
+    
+    for i in range(nombre_cartes):
+        indice = liste_images_regles[i].split(".")[0] ## correspond au nom de chaque carte. on split pour enlever le '.png', on se retrouve avec 'C01', 'C02', etc...
+        cartes["%s" %(indice)] = pygame.image.load("images/" + type_cartes + "/cartes/"+liste_images_regles[i]).convert_alpha()
+    #### end load images (wouaaah c'est super court t'as vu!??)
+
+    return(cartes)
+
+def rajoute_carte_vide(cartes):
+    cartes["V00"] = pygame.image.load("images/carte_vide/V00.png").convert_alpha()
+    return(cartes)
 
 
 def check_end(shuffled, lignes, colonnes, regles): #### A VERIFIER
@@ -307,7 +254,7 @@ def check_end(shuffled, lignes, colonnes, regles): #### A VERIFIER
     type1 = ""
     type2 = ""
 
-    ordre = ordre_valeurs(regles, "start")
+    ordre = fonctions_generales.ordre_valeurs(regles, "start")
         
     for y in range(lignes):
         for x in range(colonnes - 1): # -1 pour pouvoir comparer un a un
