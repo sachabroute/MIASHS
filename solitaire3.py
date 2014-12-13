@@ -113,10 +113,10 @@ def main() :
     image_select1 = pygame.image.load("images/select.png")
     image_select2 = pygame.image.load("images/select2.png")
     image_select_top = pygame.image.load("images/select_top.png")
-    nombre_cartes = 16
-    nombre_paquets = 4
-    regles_jeu = [nombre_cartes, "start", "sup", "diff_color", "king"]
-    regles_empile = [nombre_cartes, "start", "inf", "same_symbol", "ace"]
+    nombre_cartes = 13
+    nombre_paquets = 2
+    regles_jeu = [nombre_cartes, "start", "inf", "diff_color", "king"]
+    regles_empile = [nombre_cartes, "start", "sup", "same_symbol", "ace"]
     
     cartes_alea = generation_jeu_aleatoire("images/classic/cartes/", nombre_cartes, nombre_paquets)
     game = random_jeu_sol(cartes_alea, nombre_paquets)
@@ -261,7 +261,7 @@ def main() :
                     ##Si oui, le mouvement est validé
                     if not card_select1 == "" and not card_select2 == "" :
                         
-                        if valid == True and card_place2[0] < len(game)-2 :
+                        if valid == True and cardplace2[0] < len(game)-2 :
                             tomove = game[cardplace1[0]][cardplace1[1]:]
                             tomove.reverse()
                             for i in range(len(tomove)) :
