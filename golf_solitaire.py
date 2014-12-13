@@ -137,6 +137,7 @@ def main():
     select_card = False
     coord_card = (-1,-1)
     pioche = False
+    game_started = False ## dans les options, permet de savoir si l'utilisateur peut changer la taille ou non
 
 
     while True:
@@ -152,18 +153,18 @@ def main():
                 if click_type == "cartes" and carte_pioche != "V00":
                     coord_card = (mouseX - 80) // 120, len(tableau_cartes[ind]) - 1
                     select_card = True
+                    game_started = True
                 elif click_type == "pioche":
                     carte_pioche = pioche_cartes.pop()
+                    game_started = True
                 elif click_type == "options":
-                    type_cartes, taille_jeu = game_options.options(fenetre, type_cartes, taille_jeu)
+                    type_cartes, taille_jeu = game_options.options(fenetre, type_cartes, taille_jeu, game_started)
                     cartes = chargement_dico(type_cartes, regles)
                     cartes = rajoute_carte_vide(cartes)
 
             elif event.type == KEYDOWN:
                 if event.key == K_p:
                     print(ordre_valeurs(regles, "start"))
-                elif event.key == K_o:
-                    type_cartes, taille_jeu = game_options.options(fenetre, type_cartes, taille_jeu)
 
         ## affiche fond
         fenetre.blit(fond, (0,0))
@@ -264,8 +265,8 @@ def check_mouse(mouse, tableau_cartes, nbre_pioche, colonnes, screen_size):
 
 def end_game(outcome):
     print(outcome)
-    sys.exit()
     pygame.quit()
+    sys.exit()
     
 
 
