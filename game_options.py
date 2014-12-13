@@ -47,6 +47,8 @@ def options(fenetre, type_jeu, taille_jeu, game_started):
     restart = False
     color_restart = (0,0,0), (230,230,230)# pour inverser les couleurs du bouton restart
 
+    taille_jeu_original = taille_jeu
+
 
     while True:
 
@@ -68,16 +70,14 @@ def options(fenetre, type_jeu, taille_jeu, game_started):
                     type_jeu = 'classic'
                 ## pour la fleche retour
                 elif 600 <= mouseX <= 650 and 20 <= mouseY <= 70:
+                    if taille_jeu != taille_jeu_original:
+                        restart = True
                     return(type_jeu, taille_jeu, restart)
                 elif 600 <= mouseX <= 810 and 100 <= mouseY <= 150:
-                    if restart:
-                        restart = False
-                        color_restart = (0,0,0), (230,230,230)
-                    else:
-                        restart = True
-                        color_restart = (230,230,230), (0,0,0)
+                    restart = True
+                    color_restart = (230,230,230), (0,0,0)
                 ## pour la taille du jeu
-                if not game_started:
+                if not game_started or restart:
                     if 160 <= mouseX <= 180 and 540 <= mouseY <= 580:
                         taille_jeu = 28
                     elif 460 <= mouseX <= 480 and 540 <= mouseY <= 580:
@@ -131,7 +131,7 @@ def options(fenetre, type_jeu, taille_jeu, game_started):
         
         label = myfont.render("Reglage de la taille du jeu", 1, (255,255,0))
         fenetre.blit(label, (40, 470))
-        if not game_started: ## on affiche que si un jeu n'est pas en cours
+        if not game_started or restart: ## on affiche que si un jeu n'est pas en cours
     ## Affiche le text            
             label = myfont2.render("28 cartes: ", 1, (255,255,0))
             fenetre.blit(label, (40, 540))
