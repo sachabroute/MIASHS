@@ -157,10 +157,7 @@ def napoleon(type_cartes, taille_jeu):
     coord_depart = (-1,-1)
     select_dest = False ## variable si la carte de destination a été selectionnée
     coord_dest = (-1,-1)
-    myfont = pygame.font.SysFont("monospace", 20)
     game_started = False ## devient true quand l'utilisateur commence a jouer! (utilise pour les options)
-    allow_redo = False ## permet de limiter le nombre de 'redo's de l'utilisateur a une fois
-    redo = False ## si l'utilisateur veux revenir en arriere d'un mouvement
 
     while True:
         mouseX, mouseY = pygame.mouse.get_pos()
@@ -188,10 +185,7 @@ def napoleon(type_cartes, taille_jeu):
                     if restart:
                         napoleon(type_cartes, taille_jeu)
                     cartes = chargement_dico(type_cartes, regles)
-                    cartes = rajoute_carte_vide(cartes)
-                elif allow_redo and 500 <= mouseX <= 910 and 600 <= mouseY <= 650:
-                    start_time = pygame.time.get_ticks()
-                    redo = True
+                    cartes = rajoute_carte_vide(cartes) 
 
             if event.type == KEYDOWN:
                 if event.key == K_o:
@@ -207,26 +201,6 @@ def napoleon(type_cartes, taille_jeu):
         ## affiche rouage selectionne
         if fenetreX - 50 <= mouseX <= fenetreX - 20 and 15 <= mouseY <= 45:
             fenetre.blit(options_select, (fenetreX - 50, 15))
-
-        ## affiche retour en arriere d'un mouvement
-        if allow_redo:
-            pygame.draw.rect(fenetre, (150,100,150), (500, 600, 410, 50), 0)
-            if 500 <= mouseX <= 910 and 600 <= mouseY <= 650:
-                pygame.draw.rect(fenetre, (100,150,150), (500, 600, 410, 50), 0)
-        else:
-            pygame.draw.rect(fenetre, (150,150,150), (500, 600, 410, 50), 0)
-        label = myfont.render("Revenir en arriere d'un mouvement", 1, (230,230,230))
-        fenetre.blit(label, (505, 610))
-
-## reviens en arriere d'un pas
-        if redo:
-            pygame.draw.rect(fenetre, (randrange(0,255),randrange(0,255),randrange(0,255)), (500, 600, 410, 50), 0)
-            if abs(pygame.time.get_ticks() - start_time) > 1000:
-                shuffled[coord_depart[1]][coord_depart[0]] = shuffled[coord_dest[1]][coord_dest[0]]
-                shuffled[coord_dest[1]][coord_dest[0]] = "V00"
-                redo = False
-                allow_redo = False
-            
         
         ## affiche cartes
         for y in range(lignes):
@@ -248,13 +222,9 @@ def napoleon(type_cartes, taille_jeu):
 
         if select_dest:
             if check_move(shuffled, coord_depart, coord_dest, regles):
-                memory_card = shuffled[coord_depart[1]][coord_depart[0]]
-                memory_coorddepart = coord_depart
-                memory_coorddest = coord_dest
                 shuffled[coord_dest[1]][coord_dest[0]] = shuffled[coord_depart[1]][coord_depart[0]]
                 shuffled[coord_depart[1]][coord_depart[0]] = "V00"
                 game_started = True ## le jeu a commence
-                allow_redo = True
 ##            shuffled = check_move_new(shuffled, coord_depart, coord_dest, regles)
             select_depart,select_dest = False, False
             time.sleep(0.2) ## pour qu'il y ait une ptite pause pour qu'on voit bien les couleurs des contours

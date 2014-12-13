@@ -31,17 +31,6 @@ while True:
             pygame.quit()
             sys.exit()
 
-        elif event.type == KEYDOWN:
-            if event.key == K_1:
-                print("1")
-                napoleon.main()
-            elif event.key == K_2:
-                print("2")
-                golf.main()
-            elif event.key == K_3:
-                print("3")
-                solitaire.main()
-
         elif event.type == MOUSEBUTTONDOWN:
             
             if 100 < mouseX < 500+(150*(1-((mouseY-130)/225))) and 130 < mouseY < 355 :
@@ -53,6 +42,14 @@ while True:
             elif 100 < mouseX < 500+(150*(1-((mouseY-405)/225))) and 405 < mouseY < 630 :
                 print("golf")
                 golf.main()
+            elif 500+(200*(1-((mouseY-405)/225))) < mouseX < 1100 and 405 < mouseY < 466 :
+                print("options")
+            elif 500+(200*(1-((mouseY-405)/225))) < mouseX < 1100 and 487 < mouseY < 548 :
+                print("credits")
+            elif 500+(200*(1-((mouseY-405)/225))) < mouseX < 1100 and 569 < mouseY < 630 :
+                print("quitter")
+                pygame.quit()
+                sys.exit()
 
         elif event.type == MOUSEMOTION :
             if 100 < mouseX < 500+(150*(1-((mouseY-130)/225))) and 130 < mouseY < 355 :

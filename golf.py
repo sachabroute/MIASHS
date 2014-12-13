@@ -100,11 +100,7 @@ def golf(type_cartes, taille_jeu):
     pygame.init()
     pygame.display.set_caption("MIASHS")
 
-    ##Chargement des images
-    fond = pygame.image.load("images/fond/fond.png")
 
-    options = pygame.image.load("images/options/rouage.png")
-    options_select = pygame.image.load("images/options/rouage_select.png")
 
     ##Définition des règles
     regles = int(taille_jeu / 4)
@@ -113,6 +109,13 @@ def golf(type_cartes, taille_jeu):
 ##    fenetre = pygame.display.set_mode((60+(regles+1)*80, 750))
     fenetreX, fenetreY = 80+(colonnes*75)+((colonnes-1)*45)+80, 750
     fenetre = pygame.display.set_mode((fenetreX, fenetreY))
+
+    ##Chargement des images
+    fond = pygame.image.load("images/fond/fond.png")
+    fond = pygame.transform.scale(fond, (fenetreX, fenetreY))
+
+    options = pygame.image.load("images/options/rouage.png")
+    options_select = pygame.image.load("images/options/rouage_select.png")
     
     cartes = chargement_dico(type_cartes, regles)
 
@@ -134,8 +137,11 @@ def golf(type_cartes, taille_jeu):
     select_card = False
     coord_card = (-1,-1)
     pioche = False
+    myfont = pygame.font.SysFont("monospace", 20)
     game_started = False ## dans les options, permet de savoir si l'utilisateur peut changer la taille ou non
-
+    allow_redo = False ## permet de limiter le nombre de 'redo's de l'utilisateur a une fois
+    redo = False ## si l'utilisateur veux revenir en arriere d'un mouvement
+    last_move = '' ## prends les valeurs 'pioche' ou 'tableau' pour indiquer le dernier type de mouvement de l'utilisateur
 
     while True:
         mouseX, mouseY = pygame.mouse.get_pos()
@@ -151,15 +157,22 @@ def golf(type_cartes, taille_jeu):
                     coord_card = (mouseX - 80) // 120, len(tableau_cartes[ind]) - 1
                     select_card = True
                     game_started = True
+                    last_move = click_type
                 elif click_type == "pioche":
+                    memory_pioche = carte_pioche
                     carte_pioche = pioche_cartes.pop()
                     game_started = True
+                    allow_redo = True
+                    last_move = click_type
                 elif click_type == "options":
                     type_cartes, taille_jeu, restart = game_options.options(fenetre, type_cartes, taille_jeu, game_started)
                     if restart:
                         golf(type_cartes, taille_jeu)
                     cartes = chargement_dico(type_cartes, regles)
                     cartes = rajoute_carte_vide(cartes)
+                elif allow_redo and click_type == "voyage temporel":
+                    start_time = pygame.time.get_ticks()
+                    redo = True
 
             elif event.type == KEYDOWN:
                 if event.key == K_p:
@@ -173,6 +186,31 @@ def golf(type_cartes, taille_jeu):
         ## affiche rouage selectionne
         if fenetreX - 50 <= mouseX <= fenetreX - 20 and 15 <= mouseY <= 45:
             fenetre.blit(options_select, (fenetreX - 50, 15))
+
+        ## affiche retour en arriere d'un mouvement
+        if allow_redo:
+            pygame.draw.rect(fenetre, (150,100,150), (500, 400, 410, 50), 0)
+            if 500 <= mouseX <= 910 and 400 <= mouseY <= 450:
+                pygame.draw.rect(fenetre, (100,150,150), (500, 400, 410, 50), 0)
+        else:
+            pygame.draw.rect(fenetre, (150,150,150), (500, 400, 410, 50), 0)
+        label = myfont.render("Revenir en arriere d'un mouvement", 1, (230,230,230))
+        fenetre.blit(label, (505, 410))
+
+## reviens en arriere d'un pas
+        if redo:
+            pygame.draw.rect(fenetre, (randrange(0,255),randrange(0,255),randrange(0,255)), (500, 400, 410, 50), 0)
+            if abs(pygame.time.get_ticks() - start_time) > 1000 and last_move == 'cartes':
+                tableau_cartes[memory_coord[0]].append(carte_pioche)
+                carte_pioche = memory_pioche
+                redo = False
+                allow_redo = False
+            elif abs(pygame.time.get_ticks() - start_time) > 1000 and last_move == 'pioche':
+                pioche_cartes.append(carte_pioche)
+                carte_pioche = memory_pioche
+                redo = False
+                allow_redo = False
+
         
         ## affiche cartes
         for x in range(colonnes):
@@ -197,8 +235,11 @@ def golf(type_cartes, taille_jeu):
 
         if select_card:
             if check_move(tableau_cartes, carte_pioche, coord_card, regles):
+                memory_pioche = carte_pioche
+                memory_coord = coord_card[0], coord_card[1]
                 carte_pioche = tableau_cartes[coord_card[0]][coord_card[1]]
                 del(tableau_cartes[coord_card[0]][coord_card[1]])
+                allow_redo = True
             select_card = False
             time.sleep(0.3)
 
@@ -241,7 +282,6 @@ def check_move(tableau_cartes, carte_pioche, coord_card, regles):
         valid = True
     elif 1 in ordre and ordre.index(num_carte) == regles - 1 and ordre.index(num_carte_pioche) == 0: ### roi sur as
         valid = True
-        print(ok)
     elif 1 in ordre and ordre.index(num_carte) == 0 and ordre.index(num_carte_pioche) == regles - 1: ### as sur roi
         valid = True
     
@@ -259,8 +299,11 @@ def check_mouse(mouse, tableau_cartes, nbre_pioche, colonnes, screen_size):
         return("pioche",'')
     elif screen_size[0] - 50 <= mouse[0] <= screen_size[0] - 20 and 15 <= mouse[1] <= 45:
         return("options",'')
+    elif 500 <= mouse[0] <= 910 and 400 <= mouse[1] <= 450:
+        return("voyage temporel",'')
 
     return('','')
+
 
 def end_game(outcome):
     print(outcome)
