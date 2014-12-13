@@ -109,9 +109,13 @@ def napoleon(type_cartes, taille_jeu):
     ##Chargement des images
     fond = pygame.image.load("images/fond/fond.png")
 
+<<<<<<< HEAD
     options = pygame.image.load("images/options/rouage.png")
     options_select = pygame.image.load("images/options/rouage_select.png")
 
+=======
+    #options = pygame.image.load("images/rouage.png")
+>>>>>>> origin/bis
 
     ##Définition des règles
     regles = int(taille_jeu / 4)
