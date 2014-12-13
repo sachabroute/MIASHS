@@ -213,8 +213,8 @@ def images(repertoire_cartes) :
     ##Renvoie un dictionnaire d'images en fonction des noms de cartes.
 
     ##Récupération des cartes et placement dans une liste
-    os.chdir(repertoire_cartes)
-    liste_images_brutes = os.listdir()
+    liste_images_brutes = os.listdir(repertoire_cartes)
+    print(liste_images_brutes)
 
     ##Définition de la variable de sortie
     dico_images = {}
@@ -223,7 +223,7 @@ def images(repertoire_cartes) :
     ##ne pas prendre en compte les fichiers temp.
     for i in range(len(liste_images_brutes)) :
         try :
-            dico_images[liste_images_brutes[i]] = pygame.image.load(liste_images_brutes[i]).convert_alpha()
+        dico_images[liste_images_brutes[i]] = pygame.image.load(repertoire_cartes+liste_images_brutes[i]).convert_alpha()
         except :
             pass
 
