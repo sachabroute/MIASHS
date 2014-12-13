@@ -4,6 +4,7 @@ import sys
 import os
 import time
 from random import *
+import game_options
 
 
 
@@ -82,26 +83,11 @@ def chargement_images(type_cartes, regles):
     return(liste_images_regles, nombre_cartes)
 
 
-def main():
-    pygame.init()
-    pygame.display.set_caption("MIASHS")
-
-    ##Chargement des images
-    fond = pygame.image.load("images/fond/fond.png")
-
-    options = pygame.image.load("images/rouage.png")
-
-    ##Définition des règles
-    regles = 13 ##Est égal à 13 ou 14
-    type_cartes = 'simpsons'
-    fenetre = pygame.display.set_mode((60+(regles+1)*80, 750))
+def chargement_dico(type_cartes, regles):
 
     ##chargement des cartes
-    liste_images_regles, nombre_cartes = chargement_images(type_cartes, regles)    
-
-    lignes = 4
-    colonnes = int(nombre_cartes / lignes)
-
+    liste_images_regles, nombre_cartes = chargement_images(type_cartes, regles)
+    
     cartes = {} ## initialisation biblioteque vide
     
     for i in range(nombre_cartes):
@@ -109,12 +95,43 @@ def main():
         cartes["%s" %(indice)] = pygame.image.load("images/" + type_cartes + "/cartes/"+liste_images_regles[i]).convert_alpha()
     #### end load images (wouaaah c'est super court t'as vu!??)
 
+    return(cartes)
+
+def rajoute_carte_vide(cartes):
+    cartes["V00"] = pygame.image.load("images/carte_vide/V00.png").convert_alpha()
+    return(cartes)
+
+
+def napoleon(type_cartes, taille_jeu):
+    pygame.init()
+    pygame.display.set_caption("MIASHS")
+
+    ##Chargement des images
+    fond = pygame.image.load("images/fond/fond.png")
+
+    options = pygame.image.load("images/options/rouage.png")
+    options_select = pygame.image.load("images/options/rouage_select.png")
+
+    ##Définition des règles
+    regles = int(taille_jeu / 4)
+    fenetreX, fenetreY = (80+(regles+1)*80, 750)
+    fenetre = pygame.display.set_mode((fenetreX, fenetreY))
+
+    ##chargement des cartes
+    liste_images_regles, nombre_cartes = chargement_images(type_cartes, regles)    
+
+    lignes = 4
+    colonnes = int(nombre_cartes / lignes)
+
+    cartes = chargement_dico(type_cartes, regles)
+
 
     ## creation d'une liste de base, et melange de cartes
     liste_cartes = [name for name in cartes] ## prends chaque nom de cartes dans la biblioteque
 
     ## rajout de cartes vides a la fin des listes.
-    cartes["V00"] = pygame.image.load("images/carte_vide/V00.png").convert_alpha()
+    cartes = rajoute_carte_vide(cartes)
+    
     for i in range(lignes):
         liste_cartes.append("V00")
 
@@ -134,33 +151,40 @@ def main():
 ##########
                 
 
-    mouse_coord = (-1,-1)
+    mouseX, tableauY = (-1,-1)
     select_depart = False ## variable si la carte de depart a été selectionnée
     coord_depart = (-1,-1)
     select_dest = False ## variable si la carte de destination a été selectionnée
     coord_dest = (-1,-1)
+    game_started = False ## devient true quand l'utilisateur commence a jouer! (utilise pour les options)
 
-    while True:        
+    while True:
+        mouseX, mouseY = pygame.mouse.get_pos()
         for event in pygame.event.get():
-            
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                 pygame.quit()
                 sys.exit()
 
             if event.type == MOUSEBUTTONDOWN:
-                mouse_coord = pygame.mouse.get_pos()
+
                 ## conversion coordonnées brutes en coordonnées tableau
-                mouse_coord = (mouse_coord[0] - 30) // 80, (mouse_coord[1] - 30) // 118
-                if select_depart == False and 0 <= mouse_coord[0] < colonnes + 1 and 0 <= mouse_coord[1] < lignes and shuffled[mouse_coord[1]][mouse_coord[0]] != "V00": ## pour la carte de depart
-                    coord_depart = mouse_coord
+                tableauX, tableauY = (mouseX - 30) // 80, (mouseY - 30) // 118
+                if select_depart == False and 0 <= tableauX < colonnes + 1 and 0 <= tableauY < lignes and shuffled[tableauY][tableauX] != "V00": ## pour la carte de depart
+                    coord_depart = tableauX, tableauY
                     select_depart = True
                 ## si l'utilisateur click sur une carte au lieu du vide en deuxieme choix
-                elif select_dest == False and 0 <= mouse_coord[0] < colonnes + 1 and 0 <= mouse_coord[1] < lignes and shuffled[mouse_coord[1]][mouse_coord[0]] != "V00":
-                    coord_depart = mouse_coord
+                elif select_dest == False and 0 <= tableauX < colonnes + 1 and 0 <= tableauY < lignes and shuffled[tableauY][tableauX] != "V00":
+                    coord_depart = tableauX, tableauY
                     select_depart = True
-                elif select_dest == False and 0 <= mouse_coord[0] < colonnes + 1 and 0 <= mouse_coord[1] < lignes and shuffled[mouse_coord[1]][mouse_coord[0]] == "V00": ## pour la position de destination
-                    coord_dest = mouse_coord
+                elif select_dest == False and 0 <= tableauX < colonnes + 1 and 0 <= tableauY < lignes and shuffled[tableauY][tableauX] == "V00": ## pour la position de destination
+                    coord_dest = tableauX, tableauY
                     select_dest = True
+                elif fenetreX - 50 <= mouseX <= fenetreX - 20 and 15 <= mouseY <= 45:
+                    type_cartes, taille_jeu, restart = game_options.options(fenetre, type_cartes, taille_jeu, game_started)
+                    if restart:
+                        napoleon(type_cartes, taille_jeu)
+                    cartes = chargement_dico(type_cartes, regles)
+                    cartes = rajoute_carte_vide(cartes) 
 
             if event.type == KEYDOWN:
                 if event.key == K_o:
@@ -170,6 +194,12 @@ def main():
 
         ## affiche fond
         fenetre.blit(fond, (0,0))
+
+        ## affiche rouage options
+        fenetre.blit(options, (fenetreX - 50, 15))
+        ## affiche rouage selectionne
+        if fenetreX - 50 <= mouseX <= fenetreX - 20 and 15 <= mouseY <= 45:
+            fenetre.blit(options_select, (fenetreX - 50, 15))
         
         ## affiche cartes
         for y in range(lignes):
@@ -193,6 +223,7 @@ def main():
             if check_move(shuffled, coord_depart, coord_dest, regles):
                 shuffled[coord_dest[1]][coord_dest[0]] = shuffled[coord_depart[1]][coord_depart[0]]
                 shuffled[coord_depart[1]][coord_depart[0]] = "V00"
+                game_started = True ## le jeu a commence
 ##            shuffled = check_move_new(shuffled, coord_depart, coord_dest, regles)
             select_depart,select_dest = False, False
             time.sleep(0.2) ## pour qu'il y ait une ptite pause pour qu'on voit bien les couleurs des contours
@@ -203,7 +234,7 @@ def main():
 
         
         ##resest variables
-        mouse_coord = (-1,-1)
+        tableauX, tableauY = (-1,-1)
         
 
 def check_move(shuffled, move_from, move_to, regles):
@@ -268,6 +299,9 @@ def check_end(shuffled, lignes, colonnes, regles): #### A VERIFIER
 
 def end_game(outcome):
     print(outcome)
+
+def main():
+    napoleon('simpsons',52)
 
 
 # ==============================================================================
