@@ -129,8 +129,8 @@ def napoleon(type_cartes, taille_jeu):
         if redo:
             pygame.draw.rect(fenetre, (randrange(0,255),randrange(0,255),randrange(0,255)), (500, 600, 410, 50), 0)
             if abs(pygame.time.get_ticks() - start_time) > 1000:
-                shuffled[coord_depart[1]][coord_depart[0]] = shuffled[coord_dest[1]][coord_dest[0]]
-                shuffled[coord_dest[1]][coord_dest[0]] = "V00"
+                shuffled[memory_depart[1]][memory_depart[0]] = shuffled[memory_dest[1]][memory_dest[0]]
+                shuffled[memory_dest[1]][memory_dest[0]] = "V00"
                 redo = False
                 allow_redo = False
             
@@ -159,8 +159,8 @@ def napoleon(type_cartes, taille_jeu):
             regles_jeu[4] = coord_dest[0]
             if fonctions_generales.check_move(carte_depart, carte_compare, regles_jeu):
                 memory_card = shuffled[coord_depart[1]][coord_depart[0]]
-                memory_coorddepart = coord_depart
-                memory_coorddest = coord_dest
+                memory_depart = coord_depart
+                memory_dest = coord_dest
                 shuffled[coord_dest[1]][coord_dest[0]] = shuffled[coord_depart[1]][coord_depart[0]]
                 shuffled[coord_depart[1]][coord_depart[0]] = "V00"
                 game_started = True ## le jeu a commence
@@ -170,8 +170,7 @@ def napoleon(type_cartes, taille_jeu):
             time.sleep(0.2) ## pour qu'il y ait une ptite pause pour qu'on voit bien les couleurs des contours
 
 
-        if check_end(shuffled, lignes, colonnes, regles):
-            end_game("win")
+        check_end(shuffled, lignes, colonnes, regles)        
 
         
         ##resest variables
@@ -247,6 +246,19 @@ def rajoute_carte_vide(cartes):
 
 def check_end(shuffled, lignes, colonnes, regles): #### A VERIFIER
 
+## si le jeu est perdu
+    dead_end = 0
+    for y in range(lignes):
+        for x in range(colonnes + 1):
+            if shuffled[y][x] == "V00":
+                if int(shuffled[y][x - 1][1:]) == 13:
+                    dead_end += 1
+                elif shuffled[y][x - 1] == "V00":
+                    dead_end += 1
+    if dead_end == 4:
+        end_game("loss")
+
+## si le jeu est gagne
     temp = 0
     break_loop = False
     num1 = 0
@@ -270,13 +282,14 @@ def check_end(shuffled, lignes, colonnes, regles): #### A VERIFIER
             type1 = shuffled[y][x][0]
             type2 = shuffled[y][x+1][0]
             if not (type1 == type2 and (num1 + 1) == num2):
-                return(False)
-
-    return(True)
+                return
+    end_game("win")
 
 
 def end_game(outcome):
     print(outcome)
+    pygame.quit()
+    sys.exit()
 
 def main():
     napoleon('simpsons',52)

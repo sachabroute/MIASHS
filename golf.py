@@ -181,25 +181,7 @@ def golf(type_cartes, taille_jeu):
         
         ##reset variables
         mouseX, mouseY = (-1,-1)
-
-
-def check_move(tableau_cartes, carte_pioche, coord_card, regles):
-    ordre = fonctions_generales.ordre_valeurs(regles, "start")
-
-    valid = False
-    num_carte = int(tableau_cartes[coord_card[0]][coord_card[1]][1:3])
-    num_carte_pioche = int(carte_pioche[1:3])
-
-    compare = abs(ordre.index(num_carte) - ordre.index(num_carte_pioche))
-    print(compare)
-    if compare == 1:
-        valid = True
-    elif 1 in ordre and ordre.index(num_carte) == regles - 1 and ordre.index(num_carte_pioche) == 0: ### roi sur as
-        valid = True
-    elif 1 in ordre and ordre.index(num_carte) == 0 and ordre.index(num_carte_pioche) == regles - 1: ### as sur roi
-        valid = True
-    
-    return(valid)
+        
 
 def chargement_images(type_cartes, regles):
 
