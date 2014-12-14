@@ -4,7 +4,7 @@ import sys
 import os
 import time
 from random import *
-import game_options
+import options_test as game_options
 import fonctions_generales
 
 def images(cartes_alea, type_cartes):
@@ -32,16 +32,13 @@ def napoleon(type_cartes, taille_jeu):
     ##Chargement des images
     fond = pygame.image.load("images/fond/fond.png")
     fond = pygame.transform.scale(fond, (fenetreX, fenetreY))
-    options = pygame.image.load("images/options/rouage.png")
-    options_select = pygame.image.load("images/options/rouage_select.png")
+    options = pygame.image.load("images/options/options_of.png")
+    options_select = pygame.image.load("images/options/options_on.png")
     repertoire_cartes = ("images/" + type_cartes + "/cartes/")
     liste_images = fonctions_generales.generation_jeu_aleatoire(repertoire_cartes, regles, 1)
     nombre_cartes = len(liste_images)
-<<<<<<< HEAD
-    cartes_dico = fonctions_generales.images("images/" + type_cartes + "/cartes/")   
-=======
-    cartes_dico = images(liste_images, type_cartes)   
->>>>>>> 9db977b74dab55b30f0bc662177bceff45220490
+    cartes_dico = images(liste_images, type_cartes)
+    
     lignes = 4
     colonnes = int(nombre_cartes / lignes)
 
@@ -93,7 +90,7 @@ def napoleon(type_cartes, taille_jeu):
                     coord_dest = tableauX, tableauY
                     select_dest = True
                 elif fenetreX - 50 <= mouseX <= fenetreX - 20 and 15 <= mouseY <= 45:
-                    type_cartes, taille_jeu, restart = game_options.options(fenetre, type_cartes, taille_jeu, game_started)
+                    type_cartes, restart = game_options.options(fenetre, type_cartes)
                     if restart:
                         napoleon(type_cartes, taille_jeu)
                     cartes_dico = images(liste_images, type_cartes)
