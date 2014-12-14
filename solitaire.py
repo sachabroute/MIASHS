@@ -6,6 +6,7 @@ import os
 import time
 from random import *
 from fonctions_generales import *
+import principale
 
 def random_jeu_sol(cartes_alea, nombre_paquets) :
     nombre_cartes = len(cartes_alea)
@@ -102,6 +103,24 @@ def cardclick(mouse_coord, game, last_column, nombre_paquets) :
                 pos = [last_column-i*85, 50]
 
     return(card_select, pos, cardplace, rectoverso)
+
+def record_list(liste) :
+
+    prov1 = []
+    prov2 = []
+    prov3 = []
+    
+    for i in range(len(liste)) :
+        for j in range(len(liste[i])) :
+            for k in range(len(liste[i][j])) :
+                prov3.append(liste[i][j][k])
+            prov2.append(prov3)
+            prov3 = []
+        prov1.append(prov2)
+        prov2 = []
+
+    return(prov1)
+    
     
 def main() :
     pygame.init()
@@ -133,10 +152,9 @@ def main() :
     tomove = []
     cardplace1 = []
     cardplace2 = []
-    record = []
-    record.append(game[:])
     mouse_coord = pygame.mouse.get_pos()
     selection = ""
+    save = []
 
     while True:        
         for event in pygame.event.get():
@@ -204,15 +222,22 @@ def main() :
                 mouse_coord = pygame.mouse.get_pos()
                 
                 if selection == "menu" :
-                    print("menu")
+                    principale.main()
                 if selection == "options" :
                     print("options")
                 if selection == "retour" :
-                    print("retour")
+                    if not save == [] :
+                        try :
+                            game = record_list(save)
+                            save = []
+                        except :
+                            pass
                     
                 ##Clic dans la pioche                
                 if 50 < mouse_coord[0] < 125 and 50 < mouse_coord[1] < 163 :
-
+                    
+                    save = record_list(game)
+                    
                     ##Gestion des paquets
                     ##Suppression d'une carte dans la pioche cachée et ajout d'une autre dans la pioche affichée
                     try :
@@ -225,6 +250,7 @@ def main() :
                         game[-2] = game[-1]
                         game[-1] = []
 
+                    
                     card_select1 = ""
                     pos1 = []
                     cardplace1 = []
@@ -237,8 +263,8 @@ def main() :
                     else :
                         fenetre.blit(dos, (50,50))
 
-                #if 50 < mouse_coord[0] < 125 and 50 < mouse_coord[1] < 163 :
 
+                    
                 ##Si aucune carte n'est sélectionnée                
                 if card_select1 == "" :
 
@@ -247,6 +273,7 @@ def main() :
                         card_select1, pos1, cardplace1, rectoverso = cardclick(mouse_coord, game, last_column, nombre_paquets)
                         if rectoverso == 1 :
                             game[cardplace1[0]][cardplace1[1]][1] = 1
+                            
                     except :
                         card_select1 = ""
                         pos1 = []
@@ -258,6 +285,8 @@ def main() :
 
                     ##On sélectionne une deuxième carte
                     card_select2, pos2, cardplace2, rectoverso = cardclick(mouse_coord, game, last_column, nombre_paquets)
+                    if rectoverso == 1 :
+                        game[cardplace2[0]][cardplace2[1]][1] = 1
                     if len(game)-3-nombre_paquets*4 < cardplace2[0] < len(game)-2 :
                         try :
                             valid = check_move(card_select1, card_select2, regles_empile)
@@ -281,6 +310,7 @@ def main() :
                     if not card_select1 == "" and not card_select2 == "" :
                         
                         if valid == True and cardplace2[0] < len(game)-2 :
+                            save = record_list(game)
                             tomove = game[cardplace1[0]][cardplace1[1]:]
                             tomove.reverse()
                             for i in range(len(tomove)) :
@@ -291,7 +321,6 @@ def main() :
                             card_select1 = ""
                             cardplace1 = []
                             pos1 = []
-                            record.append(game[:])
 
                         ##Sinon, la deuxième carte devient la carte sélectionnée
                         else :
@@ -329,8 +358,8 @@ def main() :
                 print("Pioche couverte :", game[11])
                 print("Pioche retournée :", game[12])
             if event.type == KEYDOWN and event.key == K_h :
-                print(hello)
-     
+                print("hello")
+                
             ##Affichage des contours de sélection
             try :
                 if cardplace1[1] == len(game[cardplace1[0]])-1 or cardplace[0] == len(game)-2 :
