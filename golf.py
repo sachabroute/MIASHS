@@ -27,7 +27,7 @@ def golf(type_cartes, taille_jeu):
     options_select = pygame.image.load("images/options/rouage_select.png")
     repertoire_cartes = ("images/" + type_cartes + "/cartes/")
     liste_images = fonctions_generales.generation_jeu_aleatoire(repertoire_cartes, regles, 1) 
-    cartes_dico = fonctions_generales.images(liste_images, type_cartes)
+    cartes_dico = fonctions_generales.images("images/"+type_cartes+"/cartes/")
 
     ## creation d'une liste de base, et melange de cartes_dico
     liste_cartes = [name for name in cartes_dico]

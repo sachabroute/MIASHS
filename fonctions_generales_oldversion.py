@@ -209,11 +209,11 @@ def chargement_images(type_cartes, regles):
 ############################################################################################
 ############################################################################################
 
-def images(repertoire_cartes) :
+def images(repertoire) :
     ##Renvoie un dictionnaire d'images en fonction des noms de cartes.
 
     ##Récupération des cartes et placement dans une liste
-    liste_images_brutes = os.listdir(repertoire_cartes)
+    liste_images_brutes = os.listdir(repertoire)
     print(liste_images_brutes)
 
     ##Définition de la variable de sortie
@@ -223,7 +223,7 @@ def images(repertoire_cartes) :
     ##ne pas prendre en compte les fichiers temp.
     for i in range(len(liste_images_brutes)) :
         try :
-            dico_images[liste_images_brutes[i]] = pygame.image.load(repertoire_cartes+liste_images_brutes[i]).convert_alpha()
+            dico_images[liste_images_brutes[i]] = pygame.image.load(repertoire+liste_images_brutes[i]).convert_alpha()
         except :
             pass
 

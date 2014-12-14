@@ -26,7 +26,7 @@ def napoleon(type_cartes, taille_jeu):
     repertoire_cartes = ("images/" + type_cartes + "/cartes/")
     liste_images = fonctions_generales.generation_jeu_aleatoire(repertoire_cartes, regles, 1)
     nombre_cartes = len(liste_images)
-    cartes_dico = fonctions_generales.images(liste_images, type_cartes)   
+    cartes_dico = fonctions_generales.images("images/" + type_cartes + "/cartes/")   
     lignes = 4
     colonnes = int(nombre_cartes / lignes)
 
