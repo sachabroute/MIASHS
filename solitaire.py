@@ -136,11 +136,12 @@ def main() :
     record = []
     record.append(game[:])
     mouse_coord = pygame.mouse.get_pos()
+    selection = ""
 
     while True:        
         for event in pygame.event.get():
 
-            barre_laterale(fenetre, fenetreX, mouse_coord)
+            selection = barre_laterale(fenetre, fenetreX, mouse_coord)
             dico_images = images("images/classic/cartes/")
             verify_if_win = []
 
@@ -194,7 +195,7 @@ def main() :
 
             if event.type == MOUSEMOTION :
                 mouse_coord = pygame.mouse.get_pos()
-                barre_laterale(fenetre, fenetreX, mouse_coord)
+                selection = barre_laterale(fenetre, fenetreX, mouse_coord)
             
             ##Gestion des clics
             if event.type == MOUSEBUTTONDOWN and event.button == 1 :
@@ -202,7 +203,13 @@ def main() :
                 pos = []
                 mouse_coord = pygame.mouse.get_pos()
                 
-
+                if selection == "menu" :
+                    print("menu")
+                if selection == "options" :
+                    print("options")
+                if selection == "retour" :
+                    print("retour")
+                    
                 ##Clic dans la pioche                
                 if 50 < mouse_coord[0] < 125 and 50 < mouse_coord[1] < 163 :
 
@@ -323,10 +330,6 @@ def main() :
                 print("Pioche retournée :", game[12])
             if event.type == KEYDOWN and event.key == K_h :
                 print(hello)
-
-            
-
-                
      
             ##Affichage des contours de sélection
             try :
@@ -348,12 +351,10 @@ def main() :
                     print("Vous avez gagné !")
             except :
                 pass
-                
                            
             pygame.display.flip()
 
             fenetre.blit(fond,(0,0))
-
 
 if __name__ == '__main__':
   main()            

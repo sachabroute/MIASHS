@@ -199,7 +199,6 @@ def images(repertoire_cartes) :
 
     ##Récupération des cartes et placement dans une liste
     liste_images_brutes = os.listdir(repertoire_cartes)
-    print(liste_images_brutes)
 
     ##Définition de la variable de sortie
     dico_images = {}
@@ -221,6 +220,7 @@ def images(repertoire_cartes) :
 
 def barre_laterale(fenetre, fenetreX, mouse_coord) :
     dico_images_barre = images("images/options/")
+    selection = ""
 
     fenetre.blit(dico_images_barre["menu_off.png"], (fenetreX-50,50))
     fenetre.blit(dico_images_barre["options_off.png"], (fenetreX-50,100))
@@ -228,10 +228,15 @@ def barre_laterale(fenetre, fenetreX, mouse_coord) :
 
     if fenetreX-50 < mouse_coord[0] < fenetreX-20 and 50 < mouse_coord[1] < 80 :
         fenetre.blit(dico_images_barre["menu_on.png"], (fenetreX-50,50))
+        selection = "menu"
     if fenetreX-50 < mouse_coord[0] < fenetreX-20 and 100 < mouse_coord[1] < 130 :
         fenetre.blit(dico_images_barre["options_on.png"], (fenetreX-50,100))
+        selection = "options"
     if fenetreX-50 < mouse_coord[0] < fenetreX-20 and 150 < mouse_coord[1] < 180 :
         fenetre.blit(dico_images_barre["retour_on.png"], (fenetreX-50,150))
+        selection = "retour"
+
+    return(selection)
         
 ############################################################################################
 ############################################################################################
