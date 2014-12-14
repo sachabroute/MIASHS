@@ -106,7 +106,6 @@ def cardclick(mouse_coord, game, last_column, nombre_paquets) :
 def main() :
     pygame.init()
     pygame.display.set_caption("MIASHS")
-    fenetre = pygame.display.set_mode((1175, 750))
     fond = pygame.image.load("images/fond/fond.png")
     dos = pygame.image.load("images/classic/dos/dos6.png")
     vide = pygame.image.load("images/carte_vide/V00.png")
@@ -114,17 +113,18 @@ def main() :
     image_select2 = pygame.image.load("images/select2.png")
     image_select_top = pygame.image.load("images/select_top.png")
     nombre_cartes = 13
-    nombre_paquets = 2
+    nombre_paquets = 1
     regles_jeu = [nombre_cartes, "start", "inf", "diff_color", "king"]
     regles_empile = [nombre_cartes, "start", "sup", "same_symbol", "ace"]
     
     cartes_alea = generation_jeu_aleatoire("images/classic/cartes/", nombre_cartes, nombre_paquets)
     game = random_jeu_sol(cartes_alea, nombre_paquets)
 
-    dico_images = images(cartes_alea, "classic")
+    dico_images = images("images/classic/cartes/")
     last_column = taille_fenetre(game)
-    fenetre = pygame.display.set_mode((last_column+125, 750))
-    fond = pygame.transform.scale(fond, (last_column+125, last_column+125*750//1175))
+    fenetreX, fenetreY = last_column+150, 750
+    fenetre = pygame.display.set_mode((fenetreX, fenetreY))
+    fond = pygame.transform.scale(fond, (fenetreX, fenetreY))
     fenetre.blit(fond, (0,0))
 
     card_select1 = ""
@@ -133,10 +133,15 @@ def main() :
     tomove = []
     cardplace1 = []
     cardplace2 = []
+    record = []
+    record.append(game[:])
+    mouse_coord = pygame.mouse.get_pos()
 
     while True:        
         for event in pygame.event.get():
 
+            barre_laterale(fenetre, fenetreX, mouse_coord)
+            dico_images = images("images/classic/cartes/")
             verify_if_win = []
 
             ##Évènement de fermeture
@@ -186,12 +191,17 @@ def main() :
                 fenetre.blit(vide, (50,50))
             else :
                 fenetre.blit(dos, (50,50))
+
+            if event.type == MOUSEMOTION :
+                mouse_coord = pygame.mouse.get_pos()
+                barre_laterale(fenetre, fenetreX, mouse_coord)
             
             ##Gestion des clics
             if event.type == MOUSEBUTTONDOWN and event.button == 1 :
 
                 pos = []
                 mouse_coord = pygame.mouse.get_pos()
+                
 
                 ##Clic dans la pioche                
                 if 50 < mouse_coord[0] < 125 and 50 < mouse_coord[1] < 163 :
@@ -219,6 +229,8 @@ def main() :
                     ##Affichage d'un dos s'il reste encore des cartes
                     else :
                         fenetre.blit(dos, (50,50))
+
+                #if 50 < mouse_coord[0] < 125 and 50 < mouse_coord[1] < 163 :
 
                 ##Si aucune carte n'est sélectionnée                
                 if card_select1 == "" :
@@ -272,6 +284,7 @@ def main() :
                             card_select1 = ""
                             cardplace1 = []
                             pos1 = []
+                            record.append(game[:])
 
                         ##Sinon, la deuxième carte devient la carte sélectionnée
                         else :
@@ -310,6 +323,10 @@ def main() :
                 print("Pioche retournée :", game[12])
             if event.type == KEYDOWN and event.key == K_h :
                 print(hello)
+
+            
+
+                
      
             ##Affichage des contours de sélection
             try :
