@@ -7,6 +7,17 @@ from random import *
 import game_options
 import fonctions_generales
 
+def images(cartes_alea, type_cartes):
+
+    cartes = {}
+
+    for i in range(len(cartes_alea)):
+        try:
+            cartes[cartes_alea[i]] = pygame.image.load("images/" + type_cartes + "/cartes/"+cartes_alea[i]).convert_alpha()
+        except:
+            pass
+    return(cartes)
+
 
 def napoleon(type_cartes, taille_jeu):
     pygame.init()
@@ -81,7 +92,7 @@ def napoleon(type_cartes, taille_jeu):
                     type_cartes, taille_jeu, restart = game_options.options(fenetre, type_cartes, taille_jeu, game_started)
                     if restart:
                         napoleon(type_cartes, taille_jeu)
-                    cartes_dico = fonctions_generales.images(liste_images, type_cartes)
+                    cartes_dico = images(liste_images, type_cartes)
                     cartes_dico = rajoute_carte_vide(cartes_dico)
                 elif allow_redo and 500 <= mouseX <= 910 and 600 <= mouseY <= 650:
                     start_time = pygame.time.get_ticks()
