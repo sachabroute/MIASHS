@@ -12,38 +12,32 @@ def golf(type_cartes, taille_jeu):
     pygame.init()
     pygame.display.set_caption("MIASHS")
 
-
-
     ##Définition des règles
     regles = int(taille_jeu / 4)
-## a voir si on peut changer les lignes et colonnes par la suite
+    ## determine les lignes et colonnes grace a regles
     lignes, colonnes = taille_golf(regles)
-##    fenetre = pygame.display.set_mode((60+(regles+1)*80, 750))
+    
     fenetreX, fenetreY = 80+(colonnes*75)+((colonnes-1)*45)+80, 750
     fenetre = pygame.display.set_mode((fenetreX, fenetreY))
 
     ##Chargement des images
     fond = pygame.image.load("images/fond/fond.png")
     fond = pygame.transform.scale(fond, (fenetreX, fenetreY))
-
     options = pygame.image.load("images/options/rouage.png")
     options_select = pygame.image.load("images/options/rouage_select.png")
-
     repertoire_cartes = ("images/" + type_cartes + "/cartes/")
     liste_images = fonctions_generales.generation_jeu_aleatoire(repertoire_cartes, regles, 1) 
-    
-    cartes = fonctions_generales.images(liste_images, type_cartes)
+    cartes_dico = fonctions_generales.images(liste_images, type_cartes)
 
-    ## creation d'une liste de base, et melange de cartes
-    liste_cartes = [name for name in cartes]
+    ## creation d'une liste de base, et melange de cartes_dico
+    liste_cartes = [name for name in cartes_dico]
     shuffle(liste_cartes)
     tableau_cartes = [liste_cartes[x:x+lignes] for x in range(0, colonnes * lignes, lignes)]
     pioche_cartes = liste_cartes[colonnes * lignes:]
-    poubelle_cartes = []
 
-    ## le dos des cartes (pour la pioche), carte vide
+    ## le dos des cartes_dico (pour la pioche), carte vide
     dos = pygame.image.load("images/" + type_cartes + "/dos/dos.png").convert_alpha()
-    cartes = rajoute_carte_vide(cartes)
+    cartes_dico = rajoute_carte_vide(cartes_dico)
     carte_pioche = "V00.png"
     
 
@@ -83,8 +77,8 @@ def golf(type_cartes, taille_jeu):
                     type_cartes, taille_jeu, restart = game_options.options(fenetre, type_cartes, taille_jeu, game_started)
                     if restart:
                         golf(type_cartes, taille_jeu)
-                    cartes = chargement_dico(type_cartes, regles)
-                    cartes = rajoute_carte_vide(cartes)
+                    cartes_dico = fonctions_generales.images(liste_images, type_cartes)
+                    cartes_dico = rajoute_carte_vide(cartes_dico)
                 elif allow_redo and click_type == "voyage temporel":
                     start_time = pygame.time.get_ticks()
                     redo = True
@@ -112,7 +106,7 @@ def golf(type_cartes, taille_jeu):
         label = myfont.render("Revenir en arriere d'un mouvement", 1, (230,230,230))
         fenetre.blit(label, (505, 410))
 
-## reviens en arriere d'un pas
+        ## reviens en arriere d'un mouvement
         if redo:
             pygame.draw.rect(fenetre, (randrange(0,255),randrange(0,255),randrange(0,255)), (500, 400, 410, 50), 0)
             if abs(pygame.time.get_ticks() - start_time) > 1000 and last_move == 'cartes':
@@ -127,11 +121,11 @@ def golf(type_cartes, taille_jeu):
                 allow_redo = False
 
         
-        ## affiche cartes
+        ## affiche cartes_dico
         for x in range(colonnes):
             for y in range(lignes):
                 try:
-                    fenetre.blit(cartes[tableau_cartes[x][y]], (x * 120 + 80, y * 50 + 30))
+                    fenetre.blit(cartes_dico[tableau_cartes[x][y]], (x * 120 + 80, y * 50 + 30))
                 except:
                     break
 
@@ -143,11 +137,12 @@ def golf(type_cartes, taille_jeu):
         if select_card == True:
             pygame.draw.rect(fenetre, (0, 255, 0), ((coord_card[0] * 120 + 80 , coord_card[1] * 50 + 30), (75 , 113)), 3)
 
-
-        fenetre.blit(cartes[carte_pioche], (300, 400))
+        ## affiche la carte visible
+        fenetre.blit(cartes_dico[carte_pioche], (300, 400))
 
         pygame.display.flip()
 
+        ## apres le display flip pour que le time.sleep soit precevable
         if select_card:
             carte_select = tableau_cartes[coord_card[0]][coord_card[1]]
             if fonctions_generales.check_move(carte_select, carte_pioche, regles_jeu):
@@ -159,35 +154,12 @@ def golf(type_cartes, taille_jeu):
             select_card = False
             time.sleep(0.3)
 
-        ##ENDGAME
-        for i in range(len(tableau_cartes)):
-            if len(tableau_cartes[i])!=0:
-                break
-            if i == len(tableau_cartes) - 1:
-                end_game('win')
-
-        
-##        FIGURE OUT HOW TO DEAL WITH LOSING THE GAME
-##        if len(pioche_cartes) == 0 and len(tableau_cartes) > 1:
-##            end_game('loss')
-
-        if len(pioche_cartes) == 0:
-            for i in range(len(tableau_cartes)):
-                test_coord = (i,-1)
-                if len(tableau_cartes[i]) != 0:
-                    if fonctions_generales.check_move(carte_select, carte_pioche, regles_jeu):
-                        break
-                if i == len(tableau_cartes) - 1:
-                    end_game("loss")
-                    
-        
-        ##reset variables
-        mouseX, mouseY = (-1,-1)
+        check_end(tableau_cartes, carte_pioche, pioche_cartes, regles_jeu)
 
 
-def rajoute_carte_vide(cartes):
-    cartes["V00.png"] = pygame.image.load("images/carte_vide/V00.png").convert_alpha()
-    return(cartes)
+def rajoute_carte_vide(cartes_dico):
+    cartes_dico["V00.png"] = pygame.image.load("images/carte_vide/V00.png").convert_alpha()
+    return(cartes_dico)
     
 
 def taille_golf(regles):
@@ -229,6 +201,23 @@ def check_mouse(mouse, tableau_cartes, nbre_pioche, colonnes, screen_size):
         return("voyage temporel",'')
 
     return('','')
+
+def check_end(tableau_cartes, carte_pioche, pioche_cartes, regles_jeu):
+        ##ENDGAME
+        for i in range(len(tableau_cartes)):
+            if len(tableau_cartes[i])!=0:
+                break
+            if i == len(tableau_cartes) - 1:
+                end_game('win')
+
+        if len(pioche_cartes) == 0:
+            for i in range(len(tableau_cartes)):
+                test_coord = (i,-1)
+                if len(tableau_cartes[i]) != 0:
+                    if fonctions_generales.check_move(tableau_cartes[i][-1], carte_pioche, regles_jeu):
+                        break
+                if i == len(tableau_cartes) - 1:
+                    end_game("loss")
 
 
 def end_game(outcome):

@@ -14,53 +14,39 @@ def napoleon(type_cartes, taille_jeu):
 
     ##Définition des règles
     regles = int(taille_jeu / 4)
+    
     fenetreX, fenetreY = (200+(regles+1)*80, 750)
     fenetre = pygame.display.set_mode((fenetreX, fenetreY))
 
     ##Chargement des images
     fond = pygame.image.load("images/fond/fond.png")
     fond = pygame.transform.scale(fond, (fenetreX, fenetreY))
-
     options = pygame.image.load("images/options/rouage.png")
     options_select = pygame.image.load("images/options/rouage_select.png")
-
-    ##chargement des cartes
     repertoire_cartes = ("images/" + type_cartes + "/cartes/")
     liste_images = fonctions_generales.generation_jeu_aleatoire(repertoire_cartes, regles, 1)
     nombre_cartes = len(liste_images)
-    
-    cartes = fonctions_generales.images(liste_images, type_cartes)   
-
+    cartes_dico = fonctions_generales.images(liste_images, type_cartes)   
     lignes = 4
     colonnes = int(nombre_cartes / lignes)
 
+    ## creation d'une liste de base, et melange de cartes_dico
+    liste_cartes = [name for name in cartes_dico] ## prends chaque nom de cartes_dico dans la biblioteque
 
-    ## creation d'une liste de base, et melange de cartes
-    liste_cartes = [name for name in cartes] ## prends chaque nom de cartes dans la biblioteque
-
-    ## rajout de cartes vides a la fin des listes.
-    cartes = rajoute_carte_vide(cartes)
-    
+    ## rajout de cartes_dico vides a la fin des listes.
+    cartes_dico = rajoute_carte_vide(cartes_dico)
     for i in range(lignes):
         liste_cartes.append("V00.png")
 
     shuffle(liste_cartes)
     shuffled = [liste_cartes[x:x + colonnes + 1] for x in range(0, len(liste_cartes), colonnes + 1)] ## cree une liste deux dimensions (lignes * colonnes) avec comme valeur les valeurs de liste_cartes
-    
-    ## rajout de cartes vides a la fin des listes.
-##    cartes["V00"] = pygame.image.load("images/carte_vide/V00.png").convert_alpha()
-##    for i in range(lignes): ## on rajoute la carte vide à la fin de chaque ligne!
-##        shuffled[i].append("V00") ## On la rajoute ici parce que si on la rajoutais avant, on aurais une carte vide qq part dans le tableau!
 
-
-########## TEST select transparence
+    ## select transparence
     select1 = pygame.image.load("images/select.png").convert_alpha()
     select2 = pygame.image.load("images/select2.png").convert_alpha()
-
-##########
                 
 
-    mouseX, tableauY = (-1,-1)
+    mouseX, mouseY = (-1,-1)
     select_depart = False ## variable si la carte de depart a été selectionnée
     coord_depart = (-1,-1)
     select_dest = False ## variable si la carte de destination a été selectionnée
@@ -78,8 +64,7 @@ def napoleon(type_cartes, taille_jeu):
                 pygame.quit()
                 sys.exit()
 
-            if event.type == MOUSEBUTTONDOWN:
-
+            elif event.type == MOUSEBUTTONDOWN:
                 ## conversion coordonnées brutes en coordonnées tableau
                 tableauX, tableauY = (mouseX - 30) // 80, (mouseY - 30) // 118
                 if select_depart == False and 0 <= tableauX < colonnes + 1 and 0 <= tableauY < lignes and shuffled[tableauY][tableauX] != "V00.png": ## pour la carte de depart
@@ -96,13 +81,13 @@ def napoleon(type_cartes, taille_jeu):
                     type_cartes, taille_jeu, restart = game_options.options(fenetre, type_cartes, taille_jeu, game_started)
                     if restart:
                         napoleon(type_cartes, taille_jeu)
-                    cartes = chargement_dico(type_cartes, regles)
-                    cartes = rajoute_carte_vide(cartes)
+                    cartes_dico = fonctions_generales.images(liste_images, type_cartes)
+                    cartes_dico = rajoute_carte_vide(cartes_dico)
                 elif allow_redo and 500 <= mouseX <= 910 and 600 <= mouseY <= 650:
                     start_time = pygame.time.get_ticks()
                     redo = True
 
-            if event.type == KEYDOWN:
+            elif event.type == KEYDOWN:
                 if event.key == K_o:
                     shuffled = cheat_ordonne(shuffled, lignes, colonnes)
                     time.sleep(0.2)
@@ -127,7 +112,7 @@ def napoleon(type_cartes, taille_jeu):
         label = myfont.render("Revenir en arriere d'un mouvement", 1, (230,230,230))
         fenetre.blit(label, (505, 610))
 
-## reviens en arriere d'un pas
+        ## reviens en arriere d'un mouvement
         if redo:
             pygame.draw.rect(fenetre, (randrange(0,255),randrange(0,255),randrange(0,255)), (500, 600, 410, 50), 0)
             if abs(pygame.time.get_ticks() - start_time) > 1000:
@@ -137,21 +122,18 @@ def napoleon(type_cartes, taille_jeu):
                 allow_redo = False
             
         
-        ## affiche cartes
+        ## affiche cartes_dico
         for y in range(lignes):
             for x in range(colonnes + 1): # + 1 pour rajouter la carte vide à la fin de chaque ligne
-                fenetre.blit(cartes[shuffled[y][x]], (x * 80 + 30 , y * 118 + 30))
-##        print(shuffled)
+                fenetre.blit(cartes_dico[shuffled[y][x]], (x * 80 + 30 , y * 118 + 30))
 
         ## affiche contour carte depart
         if select_depart:
-            #pygame.draw.rect(fenetre, (0, 0, 255), ((coord_depart[0] * 80 + 30 , coord_depart[1] * 118 + 30), (75 , 113)), 3)
-            fenetre.blit(select1, (coord_depart[0] * 80 + 30 , coord_depart[1] * 118 + 30)) ############TEST select transparence
+            fenetre.blit(select1, (coord_depart[0] * 80 + 30 , coord_depart[1] * 118 + 30)) ## select transparence
 
         ## affiche contour emplacement dest
         if select_dest:
-            #pygame.draw.rect(fenetre, (255, 255, 0), ((coord_dest[0] * 80 + 30 , coord_dest[1] * 118 + 30), (75 , 113)), 3)
-            fenetre.blit(select2, (coord_dest[0] * 80 + 30 , coord_dest[1] * 118 + 30)) #########TEST select transparence
+            fenetre.blit(select2, (coord_dest[0] * 80 + 30 , coord_dest[1] * 118 + 30)) ## select transparence
 
         pygame.display.flip()
 
@@ -167,16 +149,11 @@ def napoleon(type_cartes, taille_jeu):
                 shuffled[coord_depart[1]][coord_depart[0]] = "V00.png"
                 game_started = True ## le jeu a commence
                 allow_redo = True
-##            shuffled = check_move_new(shuffled, coord_depart, coord_dest, regles)
             select_depart,select_dest = False, False
             time.sleep(0.2) ## pour qu'il y ait une ptite pause pour qu'on voit bien les couleurs des contours
 
 
-        check_end(shuffled, lignes, colonnes, regles)        
-
-        
-        ##resest variables
-        tableauX, tableauY = (-1,-1)
+        check_end(shuffled, lignes, colonnes, regles)
 
 
 def cheat_ordonne(shuffled, lignes, colonnes):
@@ -206,9 +183,9 @@ def cheat_ordonne(shuffled, lignes, colonnes):
     return(ordered)
 
 
-def rajoute_carte_vide(cartes):
-    cartes["V00.png"] = pygame.image.load("images/carte_vide/V00.png").convert_alpha()
-    return(cartes)
+def rajoute_carte_vide(cartes_dico):
+    cartes_dico["V00.png"] = pygame.image.load("images/carte_vide/V00.png").convert_alpha()
+    return(cartes_dico)
 
 
 def check_end(shuffled, lignes, colonnes, regles): #### A VERIFIER
