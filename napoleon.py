@@ -32,7 +32,7 @@ def napoleon(type_cartes, taille_jeu):
     ##Chargement des images
     fond = pygame.image.load("images/fond/fond.png")
     fond = pygame.transform.scale(fond, (fenetreX, fenetreY))
-    options = pygame.image.load("images/options/options_of.png")
+    options = pygame.image.load("images/options/options_off.png")
     options_select = pygame.image.load("images/options/options_on.png")
     repertoire_cartes = ("images/" + type_cartes + "/cartes/")
     liste_images = fonctions_generales.generation_jeu_aleatoire(repertoire_cartes, regles, 1)

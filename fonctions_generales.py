@@ -136,13 +136,14 @@ def check_move(carte_depart, carte_compare, regles) :
         valid_color = True
 
     ##Vérification de la validité du déplacement.
-    if valid_number == True and valid_color == True :
+    if (valid_number == True and valid_color == True):
         valid = True
 
-    ## pour le napoleon si l'emplacement de destination est en pos 0
-    if 1 in ordre_selon_regles and regles[4] == 0 and num_carte_depart == 1:
+    ## pour le napoleon si il y a >= 2 emplacements vides cote a cote
+    if carte_compare == "V00.png" and num_carte_depart != ordre_selon_regles[0]:
         valid = True
-    elif regles[4] == 0 and num_carte_depart == ordre_selon_regles[0]:
+
+    if num_carte_depart == ordre_selon_regles[0] and regles[4] == 0:
         valid = True
 
     ##Retour de la validité du déplacement : True ou False.
