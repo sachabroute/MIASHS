@@ -90,7 +90,7 @@ def check_move(carte_depart, carte_compare, regles) :
     ##un emplacement vide.
     if regles[4] == "king" :
         ordre_selon_regles.append(0)
-    elif regles[4] == "ace" :
+    if regles[4] == "ace" :
         ordre_selon_regles.insert(0, 0)
 
     ##Récupération du symbole (C, D, H, S) et du numéro de la carte de départ.
@@ -102,13 +102,10 @@ def check_move(carte_depart, carte_compare, regles) :
     num_carte_compare = int(carte_compare[1:3])
 
     ##On soustrait les numéros de la carte comparée à la carte de départ.
-    try:
-        compare = ordre_selon_regles.index(num_carte_depart) - ordre_selon_regles.index(num_carte_compare)
-    except ValueError:
-        compare = -100
+    compare = ordre_selon_regles.index(num_carte_depart)-ordre_selon_regles.index(num_carte_compare)
 
     ##Définition de listes correspondant aux possibilités de différences entre les cartes.
-    corresp_number = {"inf" : [-1], "sup" : [1], "same" : [0], "both" : [-1,1], "both+" : [-1,1,regles[0]-1,-(regles[0]-1)] }
+    corresp_number = {"inf" : [-1], "sup" : [1], "same" : [0], "both" : [-1,1] }
 
     ##Création des variables red et black permettant de vérifier si une carte est rouge
     ##(carreau ou coeur) ou noire (trèfle ou pique).
@@ -137,12 +134,6 @@ def check_move(carte_depart, carte_compare, regles) :
 
     ##Vérification de la validité du déplacement.
     if valid_number == True and valid_color == True :
-        valid = True
-
-    ## pour le napoleon si l'emplacement de destination est en pos 0
-    if 1 in ordre_selon_regles and regles[4] == 0 and num_carte_depart == 1:
-        valid = True
-    elif regles[4] == 0 and num_carte_depart == ordre_selon_regles[0]:
         valid = True
 
     ##Retour de la validité du déplacement : True ou False.
@@ -242,19 +233,6 @@ def images(repertoire_cartes) :
 ############################################################################################
 ############################################################################################
 ############################################################################################
-
-def images_proposition(cartes_alea, type_cartes):
-
-    cartes = {}
-
-    for i in range(len(cartes_alea)):
-        try:
-            cartes[cartes_alea[i]] = pygame.image.load("images/" + type_cartes + "/cartes/"+cartes_alea[i]).convert_alpha()
-        except:
-            pass
-    return(cartes)
-
-
 
 def everymove(record, game) :
     ##Enregistre tous les mouvements réalisé par le joueur, en enregistrant le plateau

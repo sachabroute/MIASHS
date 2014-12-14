@@ -90,7 +90,7 @@ def check_move(carte_depart, carte_compare, regles) :
     ##un emplacement vide.
     if regles[4] == "king" :
         ordre_selon_regles.append(0)
-    if regles[4] == "ace" :
+    elif regles[4] == "ace" :
         ordre_selon_regles.insert(0, 0)
 
     ##Récupération du symbole (C, D, H, S) et du numéro de la carte de départ.
@@ -102,10 +102,13 @@ def check_move(carte_depart, carte_compare, regles) :
     num_carte_compare = int(carte_compare[1:3])
 
     ##On soustrait les numéros de la carte comparée à la carte de départ.
-    compare = ordre_selon_regles.index(num_carte_depart)-ordre_selon_regles.index(num_carte_compare)
+    try:
+        compare = ordre_selon_regles.index(num_carte_depart) - ordre_selon_regles.index(num_carte_compare)
+    except ValueError:
+        compare = -100
 
     ##Définition de listes correspondant aux possibilités de différences entre les cartes.
-    corresp_number = {"inf" : [-1], "sup" : [1], "same" : [0], "both" : [-1,1] }
+    corresp_number = {"inf" : [-1], "sup" : [1], "same" : [0], "both" : [-1,1], "both+" : [-1,1,regles[0]-1,-(regles[0]-1)] }
 
     ##Création des variables red et black permettant de vérifier si une carte est rouge
     ##(carreau ou coeur) ou noire (trèfle ou pique).
@@ -134,6 +137,12 @@ def check_move(carte_depart, carte_compare, regles) :
 
     ##Vérification de la validité du déplacement.
     if valid_number == True and valid_color == True :
+        valid = True
+
+    ## pour le napoleon si l'emplacement de destination est en pos 0
+    if 1 in ordre_selon_regles and regles[4] == 0 and num_carte_depart == 1:
+        valid = True
+    elif regles[4] == 0 and num_carte_depart == ordre_selon_regles[0]:
         valid = True
 
     ##Retour de la validité du déplacement : True ou False.
@@ -181,58 +190,20 @@ def generation_jeu_aleatoire(repertoire_cartes, nombre_cartes, nombre_paquets) :
     ##Retour de la liste
     return(liste_images_regles)
 
-############################################################################################
-############################################################################################
-############################################################################################
 
-def chargement_images(type_cartes, regles):
 
-    ordre = ordre_valeurs(regles, "start")
+def images(cartes_alea, type_cartes):
 
-    ##Chargement des cartes
-    liste_images_brutes = os.listdir("images/" + type_cartes + "/cartes/") ##Insère toutes les images du répertoire dans une liste
-    liste_images_regles = [] ##Nouvelle liste qui contiendra uniquement les images de jeu
+    cartes = {}
 
-    ##Boucle supprimant les cartes cavalier si égal à 13
-    for i in range(len(liste_images_brutes)) :
-        cardsplit = liste_images_brutes[i] #On prend du caractère [1] au caractère [2] pour avoir le numéro de carte.
-        cardnumber = cardsplit[1:3]
-        if int(cardnumber) in ordre : ##Si ce numéro est inférieur au nombre dans règles, alors on append, sinon rien.
-            liste_images_regles.append(liste_images_brutes[i])
-
-    ##Fin du chargement des images
-    nombre_cartes = int(len(liste_images_regles)) ##Définit le nombre de cartes à partir de la taille de la liste
-    
-    return(liste_images_regles, nombre_cartes)
-
-############################################################################################
-############################################################################################
-############################################################################################
-
-def images(repertoire_cartes) :
-    ##Renvoie un dictionnaire d'images en fonction des noms de cartes.
-
-    ##Récupération des cartes et placement dans une liste
-    liste_images_brutes = os.listdir(repertoire_cartes)
-    print(liste_images_brutes)
-
-    ##Définition de la variable de sortie
-    dico_images = {}
-
-    ##On place le chargement pygame en face de chaque image "X##.png". Le try permet de
-    ##ne pas prendre en compte les fichiers temp.
-    for i in range(len(liste_images_brutes)) :
-        try :
-            dico_images[liste_images_brutes[i]] = pygame.image.load(repertoire_cartes+liste_images_brutes[i]).convert_alpha()
-        except :
+    for i in range(len(cartes_alea)):
+        try:
+            cartes[cartes_alea[i]] = pygame.image.load("images/" + type_cartes + "/cartes/"+cartes_alea[i]).convert_alpha()
+        except:
             pass
+    return(cartes)
 
-    ##Renvoi du dictionnaire en sortie
-    return(dico_images)
 
-############################################################################################
-############################################################################################
-############################################################################################
 
 def everymove(record, game) :
     ##Enregistre tous les mouvements réalisé par le joueur, en enregistrant le plateau

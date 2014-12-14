@@ -5,7 +5,7 @@ import os
 import time
 from random import *
 import game_options
-import fonctions_generales_sacha as fonctions_generales
+import fonctions_generales
 
 
 def golf(type_cartes, taille_jeu):
@@ -28,9 +28,11 @@ def golf(type_cartes, taille_jeu):
 
     options = pygame.image.load("images/options/rouage.png")
     options_select = pygame.image.load("images/options/rouage_select.png")
-    
-    cartes = chargement_dico(type_cartes, regles)
 
+    repertoire_cartes = ("images/" + type_cartes + "/cartes/")
+    liste_images = fonctions_generales.generation_jeu_aleatoire(repertoire_cartes, regles, 1) 
+    
+    cartes = fonctions_generales.images(liste_images, type_cartes)
 
     ## creation d'une liste de base, et melange de cartes
     liste_cartes = [name for name in cartes]
@@ -42,7 +44,7 @@ def golf(type_cartes, taille_jeu):
     ## le dos des cartes (pour la pioche), carte vide
     dos = pygame.image.load("images/" + type_cartes + "/dos/dos.png").convert_alpha()
     cartes = rajoute_carte_vide(cartes)
-    carte_pioche = "V00"
+    carte_pioche = "V00.png"
     
 
     mouseX, mouseY = (-1,-1)
@@ -66,7 +68,7 @@ def golf(type_cartes, taille_jeu):
 
             elif event.type == MOUSEBUTTONDOWN:
                 click_type, ind = check_mouse((mouseX, mouseY), tableau_cartes, len(pioche_cartes), colonnes, (fenetreX, fenetreY))
-                if click_type == "cartes" and carte_pioche != "V00":
+                if click_type == "cartes" and carte_pioche != "V00.png":
                     coord_card = (mouseX - 80) // 120, len(tableau_cartes[ind]) - 1
                     select_card = True
                     game_started = True
@@ -181,44 +183,10 @@ def golf(type_cartes, taille_jeu):
         
         ##reset variables
         mouseX, mouseY = (-1,-1)
-        
 
-def chargement_images(type_cartes, regles):
-
-    ordre = fonctions_generales.ordre_valeurs(regles, "start")
-
-    ##Chargement des cartes
-    liste_images_brutes = os.listdir("images/" + type_cartes + "/cartes/") ##Insère toutes les images du répertoire dans une liste
-    liste_images_regles = [] ##Nouvelle liste qui contiendra uniquement les images de jeu
-
-    ##Boucle supprimant les cartes cavalier si égal à 13
-    for i in range(len(liste_images_brutes)) :
-        cardsplit = liste_images_brutes[i] #On prend du caractère [1] au caractère [2] pour avoir le numéro de carte.
-        cardnumber = cardsplit[1:3]
-        if int(cardnumber) in ordre : ##Si ce numéro est inférieur au nombre dans règles, alors on append, sinon rien.
-            liste_images_regles.append(liste_images_brutes[i])
-
-    ##Fin du chargement des images
-    nombre_cartes = int(len(liste_images_regles)) ##Définit le nombre de cartes à partir de la taille de la liste
-    
-    return(liste_images_regles, nombre_cartes)
-
-def chargement_dico(type_cartes, regles):
-
-    ##chargement des cartes
-    liste_images_regles, nombre_cartes = chargement_images(type_cartes, regles)
-    
-    cartes = {} ## initialisation biblioteque vide
-    
-    for i in range(nombre_cartes):
-        indice = liste_images_regles[i].split(".")[0] ## correspond au nom de chaque carte. on split pour enlever le '.png', on se retrouve avec 'C01', 'C02', etc...
-        cartes["%s" %(indice)] = pygame.image.load("images/" + type_cartes + "/cartes/"+liste_images_regles[i]).convert_alpha()
-    #### end load images (wouaaah c'est super court t'as vu!??)
-
-    return(cartes)
 
 def rajoute_carte_vide(cartes):
-    cartes["V00"] = pygame.image.load("images/carte_vide/V00.png").convert_alpha()
+    cartes["V00.png"] = pygame.image.load("images/carte_vide/V00.png").convert_alpha()
     return(cartes)
     
 

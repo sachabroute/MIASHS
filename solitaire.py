@@ -5,7 +5,7 @@ import sys
 import os
 import time
 from random import *
-from fonctions_generales import *
+from fonctions_generales_sacha import *
 
 def random_jeu_sol(cartes_alea, nombre_paquets) :
     nombre_cartes = len(cartes_alea)
@@ -121,7 +121,7 @@ def main() :
     cartes_alea = generation_jeu_aleatoire("images/classic/cartes/", nombre_cartes, nombre_paquets)
     game = random_jeu_sol(cartes_alea, nombre_paquets)
 
-    dico_images = images("images/classic/cartes/")
+    dico_images = images_proposition(cartes_alea, "classic")
     last_column = taille_fenetre(game)
     fenetre = pygame.display.set_mode((last_column+125, 750))
     fond = pygame.transform.scale(fond, (last_column+125, last_column+125*750//1175))

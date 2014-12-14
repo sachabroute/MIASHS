@@ -5,7 +5,7 @@ import os
 import time
 from random import *
 import game_options
-import fonctions_generales_sacha as fonctions_generales
+import fonctions_generales
 
 
 def napoleon(type_cartes, taille_jeu):
@@ -25,12 +25,14 @@ def napoleon(type_cartes, taille_jeu):
     options_select = pygame.image.load("images/options/rouage_select.png")
 
     ##chargement des cartes
-    liste_images_regles, nombre_cartes = chargement_images(type_cartes, regles)    
+    repertoire_cartes = ("images/" + type_cartes + "/cartes/")
+    liste_images = fonctions_generales.generation_jeu_aleatoire(repertoire_cartes, regles, 1)
+    nombre_cartes = len(liste_images)
+    
+    cartes = fonctions_generales.images(liste_images, type_cartes)   
 
     lignes = 4
     colonnes = int(nombre_cartes / lignes)
-
-    cartes = chargement_dico(type_cartes, regles)
 
 
     ## creation d'une liste de base, et melange de cartes
@@ -40,7 +42,7 @@ def napoleon(type_cartes, taille_jeu):
     cartes = rajoute_carte_vide(cartes)
     
     for i in range(lignes):
-        liste_cartes.append("V00")
+        liste_cartes.append("V00.png")
 
     shuffle(liste_cartes)
     shuffled = [liste_cartes[x:x + colonnes + 1] for x in range(0, len(liste_cartes), colonnes + 1)] ## cree une liste deux dimensions (lignes * colonnes) avec comme valeur les valeurs de liste_cartes
@@ -80,14 +82,14 @@ def napoleon(type_cartes, taille_jeu):
 
                 ## conversion coordonnées brutes en coordonnées tableau
                 tableauX, tableauY = (mouseX - 30) // 80, (mouseY - 30) // 118
-                if select_depart == False and 0 <= tableauX < colonnes + 1 and 0 <= tableauY < lignes and shuffled[tableauY][tableauX] != "V00": ## pour la carte de depart
+                if select_depart == False and 0 <= tableauX < colonnes + 1 and 0 <= tableauY < lignes and shuffled[tableauY][tableauX] != "V00.png": ## pour la carte de depart
                     coord_depart = tableauX, tableauY
                     select_depart = True
                 ## si l'utilisateur click sur une carte au lieu du vide en deuxieme choix
-                elif select_dest == False and 0 <= tableauX < colonnes + 1 and 0 <= tableauY < lignes and shuffled[tableauY][tableauX] != "V00":
+                elif select_dest == False and 0 <= tableauX < colonnes + 1 and 0 <= tableauY < lignes and shuffled[tableauY][tableauX] != "V00.png":
                     coord_depart = tableauX, tableauY
                     select_depart = True
-                elif select_dest == False and 0 <= tableauX < colonnes + 1 and 0 <= tableauY < lignes and shuffled[tableauY][tableauX] == "V00": ## pour la position de destination
+                elif select_dest == False and 0 <= tableauX < colonnes + 1 and 0 <= tableauY < lignes and shuffled[tableauY][tableauX] == "V00.png": ## pour la position de destination
                     coord_dest = tableauX, tableauY
                     select_dest = True
                 elif fenetreX - 50 <= mouseX <= fenetreX - 20 and 15 <= mouseY <= 45:
@@ -130,7 +132,7 @@ def napoleon(type_cartes, taille_jeu):
             pygame.draw.rect(fenetre, (randrange(0,255),randrange(0,255),randrange(0,255)), (500, 600, 410, 50), 0)
             if abs(pygame.time.get_ticks() - start_time) > 1000:
                 shuffled[memory_depart[1]][memory_depart[0]] = shuffled[memory_dest[1]][memory_dest[0]]
-                shuffled[memory_dest[1]][memory_dest[0]] = "V00"
+                shuffled[memory_dest[1]][memory_dest[0]] = "V00.png"
                 redo = False
                 allow_redo = False
             
@@ -162,7 +164,7 @@ def napoleon(type_cartes, taille_jeu):
                 memory_depart = coord_depart
                 memory_dest = coord_dest
                 shuffled[coord_dest[1]][coord_dest[0]] = shuffled[coord_depart[1]][coord_depart[0]]
-                shuffled[coord_depart[1]][coord_depart[0]] = "V00"
+                shuffled[coord_depart[1]][coord_depart[0]] = "V00.png"
                 game_started = True ## le jeu a commence
                 allow_redo = True
 ##            shuffled = check_move_new(shuffled, coord_depart, coord_dest, regles)
@@ -204,43 +206,8 @@ def cheat_ordonne(shuffled, lignes, colonnes):
     return(ordered)
 
 
-def chargement_images(type_cartes, regles):
-
-    ordre = fonctions_generales.ordre_valeurs(regles, "start")
-
-    ##Chargement des cartes
-    liste_images_brutes = os.listdir("images/" + type_cartes + "/cartes/") ##Insère toutes les images du répertoire dans une liste
-    liste_images_regles = [] ##Nouvelle liste qui contiendra uniquement les images de jeu
-
-    ##Boucle supprimant les cartes cavalier si égal à 13
-    for i in range(len(liste_images_brutes)) :
-        cardsplit = liste_images_brutes[i] #On prend du caractère [1] au caractère [2] pour avoir le numéro de carte.
-        cardnumber = cardsplit[1:3]
-        if int(cardnumber) in ordre : ##Si ce numéro est inférieur au nombre dans règles, alors on append, sinon rien.
-            liste_images_regles.append(liste_images_brutes[i])
-
-    ##Fin du chargement des images
-    nombre_cartes = int(len(liste_images_regles)) ##Définit le nombre de cartes à partir de la taille de la liste
-    
-    return(liste_images_regles, nombre_cartes)
-
-
-def chargement_dico(type_cartes, regles):
-
-    ##chargement des cartes
-    liste_images_regles, nombre_cartes = chargement_images(type_cartes, regles)
-    
-    cartes = {} ## initialisation biblioteque vide
-    
-    for i in range(nombre_cartes):
-        indice = liste_images_regles[i].split(".")[0] ## correspond au nom de chaque carte. on split pour enlever le '.png', on se retrouve avec 'C01', 'C02', etc...
-        cartes["%s" %(indice)] = pygame.image.load("images/" + type_cartes + "/cartes/"+liste_images_regles[i]).convert_alpha()
-    #### end load images (wouaaah c'est super court t'as vu!??)
-
-    return(cartes)
-
 def rajoute_carte_vide(cartes):
-    cartes["V00"] = pygame.image.load("images/carte_vide/V00.png").convert_alpha()
+    cartes["V00.png"] = pygame.image.load("images/carte_vide/V00.png").convert_alpha()
     return(cartes)
 
 
@@ -250,10 +217,10 @@ def check_end(shuffled, lignes, colonnes, regles): #### A VERIFIER
     dead_end = 0
     for y in range(lignes):
         for x in range(colonnes + 1):
-            if shuffled[y][x] == "V00":
-                if int(shuffled[y][x - 1][1:]) == 13:
+            if shuffled[y][x] == "V00.png":
+                if int(shuffled[y][x - 1][1:3]) == 13:
                     dead_end += 1
-                elif shuffled[y][x - 1] == "V00":
+                elif shuffled[y][x - 1] == "V00.png":
                     dead_end += 1
     if dead_end == 4:
         end_game("loss")
@@ -272,11 +239,11 @@ def check_end(shuffled, lignes, colonnes, regles): #### A VERIFIER
         for x in range(colonnes - 1): # -1 pour pouvoir comparer un a un
 ##            les try except permettent d'eliminer l'erreur ou il regarde les cases vides (parce que num_casesvides = 0 et 0 pas dans ordre)
             try:
-                num1 = ordre.index(int(shuffled[y][x][1:]))
+                num1 = ordre.index(int(shuffled[y][x][1:3]))
             except ValueError:
                 num1 = -1
             try:
-                num2 = ordre.index(int(shuffled[y][x+1][1:]))
+                num2 = ordre.index(int(shuffled[y][x+1][1:3]))
             except ValueError:
                 num2 = -1
             type1 = shuffled[y][x][0]
