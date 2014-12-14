@@ -190,7 +190,9 @@ def generation_jeu_aleatoire(repertoire_cartes, nombre_cartes, nombre_paquets) :
     ##Retour de la liste
     return(liste_images_regles)
 
-
+############################################################################################
+############################################################################################
+############################################################################################
 
 def images(repertoire_cartes) :
     ##Renvoie un dictionnaire d'images en fonction des noms de cartes.
@@ -213,20 +215,24 @@ def images(repertoire_cartes) :
     ##Renvoi du dictionnaire en sortie
     return(dico_images)
 
-
-
-def everymove(record, game) :
-    ##Enregistre tous les mouvements réalisé par le joueur, en enregistrant le plateau
-    ##à chaque tour de jeu dans un élément de liste.
-
-    record.append(game[:])
-    return(record)
-
 ############################################################################################
 ############################################################################################
 ############################################################################################
 
-def cancel(record) :
-    ##Rétablit le plateau de jeu du tour précédent.
-    return(record[-2])
-    
+def barre_laterale(fenetre, fenetreX, mouse_coord) :
+    dico_images_barre = images("images/options/")
+
+    fenetre.blit(dico_images_barre["menu_off.png"], (fenetreX-50,50))
+    fenetre.blit(dico_images_barre["options_off.png"], (fenetreX-50,100))
+    fenetre.blit(dico_images_barre["retour_off.png"], (fenetreX-50,150))
+
+    if fenetreX-50 < mouse_coord[0] < fenetreX-20 and 50 < mouse_coord[1] < 80 :
+        fenetre.blit(dico_images_barre["menu_on.png"], (fenetreX-50,50))
+    if fenetreX-50 < mouse_coord[0] < fenetreX-20 and 100 < mouse_coord[1] < 130 :
+        fenetre.blit(dico_images_barre["options_on.png"], (fenetreX-50,100))
+    if fenetreX-50 < mouse_coord[0] < fenetreX-20 and 150 < mouse_coord[1] < 180 :
+        fenetre.blit(dico_images_barre["retour_on.png"], (fenetreX-50,150))
+        
+############################################################################################
+############################################################################################
+############################################################################################
