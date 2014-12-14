@@ -8,6 +8,18 @@ import game_options
 import fonctions_generales
 
 
+def images(cartes_alea, type_cartes):
+
+    cartes = {}
+
+    for i in range(len(cartes_alea)):
+        try:
+            cartes[cartes_alea[i]] = pygame.image.load("images/" + type_cartes + "/cartes/"+cartes_alea[i]).convert_alpha()
+        except:
+            pass
+    return(cartes)
+
+
 def golf(type_cartes, taille_jeu):
     pygame.init()
     pygame.display.set_caption("MIASHS")
@@ -27,7 +39,7 @@ def golf(type_cartes, taille_jeu):
     options_select = pygame.image.load("images/options/rouage_select.png")
     repertoire_cartes = ("images/" + type_cartes + "/cartes/")
     liste_images = fonctions_generales.generation_jeu_aleatoire(repertoire_cartes, regles, 1) 
-    cartes_dico = fonctions_generales.images(liste_images, type_cartes)
+    cartes_dico = images(liste_images, type_cartes)
 
     ## creation d'une liste de base, et melange de cartes_dico
     liste_cartes = [name for name in cartes_dico]
@@ -77,7 +89,7 @@ def golf(type_cartes, taille_jeu):
                     type_cartes, taille_jeu, restart = game_options.options(fenetre, type_cartes, taille_jeu, game_started)
                     if restart:
                         golf(type_cartes, taille_jeu)
-                    cartes_dico = fonctions_generales.images(liste_images, type_cartes)
+                    cartes_dico = images(liste_images, type_cartes)
                     cartes_dico = rajoute_carte_vide(cartes_dico)
                 elif allow_redo and click_type == "voyage temporel":
                     start_time = pygame.time.get_ticks()

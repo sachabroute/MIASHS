@@ -192,16 +192,26 @@ def generation_jeu_aleatoire(repertoire_cartes, nombre_cartes, nombre_paquets) :
 
 
 
-def images(cartes_alea, type_cartes):
+def images(repertoire_cartes) :
+    ##Renvoie un dictionnaire d'images en fonction des noms de cartes.
 
-    cartes = {}
+    ##Récupération des cartes et placement dans une liste
+    liste_images_brutes = os.listdir(repertoire_cartes)
+    print(liste_images_brutes)
 
-    for i in range(len(cartes_alea)):
-        try:
-            cartes[cartes_alea[i]] = pygame.image.load("images/" + type_cartes + "/cartes/"+cartes_alea[i]).convert_alpha()
-        except:
+    ##Définition de la variable de sortie
+    dico_images = {}
+
+    ##On place le chargement pygame en face de chaque image "X##.png". Le try permet de
+    ##ne pas prendre en compte les fichiers temp.
+    for i in range(len(liste_images_brutes)) :
+        try :
+            dico_images[liste_images_brutes[i]] = pygame.image.load(repertoire_cartes+liste_images_brutes[i]).convert_alpha()
+        except :
             pass
-    return(cartes)
+
+    ##Renvoi du dictionnaire en sortie
+    return(dico_images)
 
 
 
