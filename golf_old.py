@@ -4,7 +4,7 @@ import sys
 import os
 import time
 from random import *
-import options_test as game_options
+import game_options
 import fonctions_generales
 
 
@@ -86,7 +86,7 @@ def golf(type_cartes, taille_jeu):
                     allow_redo = True
                     last_move = click_type
                 elif click_type == "options":
-                    type_cartes, restart = game_options.options(fenetre, type_cartes)
+                    type_cartes, taille_jeu, restart = game_options.options(fenetre, type_cartes, taille_jeu, game_started)
                     if restart:
                         golf(type_cartes, taille_jeu)
                     cartes_dico = images(liste_images, type_cartes)
