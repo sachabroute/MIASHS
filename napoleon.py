@@ -6,6 +6,7 @@ import time
 from random import *
 import options_test as game_options
 import fonctions_generales
+import principale
 
 def images(cartes_alea, type_cartes):
 
@@ -32,8 +33,6 @@ def napoleon(type_cartes, taille_jeu):
     ##Chargement des images
     fond = pygame.image.load("images/fond/fond.png")
     fond = pygame.transform.scale(fond, (fenetreX, fenetreY))
-    options = pygame.image.load("images/options/options_off.png")
-    options_select = pygame.image.load("images/options/options_on.png")
     repertoire_cartes = ("images/" + type_cartes + "/cartes/")
     liste_images = fonctions_generales.generation_jeu_aleatoire(repertoire_cartes, regles, 1)
     nombre_cartes = len(liste_images)
@@ -89,14 +88,16 @@ def napoleon(type_cartes, taille_jeu):
                 elif select_dest == False and 0 <= tableauX < colonnes + 1 and 0 <= tableauY < lignes and shuffled[tableauY][tableauX] == "V00.png": ## pour la position de destination
                     coord_dest = tableauX, tableauY
                     select_dest = True
-                elif fenetreX - 50 <= mouseX <= fenetreX - 20 and 15 <= mouseY <= 45:
+                elif selection == "menu":
+                    principale.main()
+                elif selection == "options":
                     type_cartes, restart = game_options.options(fenetre, type_cartes)
                     if restart:
                         napoleon(type_cartes, taille_jeu)
+                    repertoire_cartes = "images/" + type_cartes + "/cartes/"
                     cartes_dico = images(liste_images, type_cartes)
                     cartes_dico = rajoute_carte_vide(cartes_dico)
-                elif allow_redo and 500 <= mouseX <= 910 and 600 <= mouseY <= 650:
-                    start_time = pygame.time.get_ticks()
+                elif selection == "retour" and allow_redo:
                     redo = True
 
             elif event.type == KEYDOWN:
@@ -108,30 +109,12 @@ def napoleon(type_cartes, taille_jeu):
         ## affiche fond
         fenetre.blit(fond, (0,0))
 
-        ## affiche rouage options
-        fenetre.blit(options, (fenetreX - 50, 15))
-        ## affiche rouage selectionne
-        if fenetreX - 50 <= mouseX <= fenetreX - 20 and 15 <= mouseY <= 45:
-            fenetre.blit(options_select, (fenetreX - 50, 15))
-
-        ## affiche retour en arriere d'un mouvement
-        if allow_redo:
-            pygame.draw.rect(fenetre, (150,100,150), (500, 600, 410, 50), 0)
-            if 500 <= mouseX <= 910 and 600 <= mouseY <= 650:
-                pygame.draw.rect(fenetre, (100,150,150), (500, 600, 410, 50), 0)
-        else:
-            pygame.draw.rect(fenetre, (150,150,150), (500, 600, 410, 50), 0)
-        label = myfont.render("Revenir en arriere d'un mouvement", 1, (230,230,230))
-        fenetre.blit(label, (505, 610))
-
         ## reviens en arriere d'un mouvement
         if redo:
-            pygame.draw.rect(fenetre, (randrange(0,255),randrange(0,255),randrange(0,255)), (500, 600, 410, 50), 0)
-            if abs(pygame.time.get_ticks() - start_time) > 1000:
-                shuffled[memory_depart[1]][memory_depart[0]] = shuffled[memory_dest[1]][memory_dest[0]]
-                shuffled[memory_dest[1]][memory_dest[0]] = "V00.png"
-                redo = False
-                allow_redo = False
+            shuffled[memory_depart[1]][memory_depart[0]] = shuffled[memory_dest[1]][memory_dest[0]]
+            shuffled[memory_dest[1]][memory_dest[0]] = "V00.png"
+            redo = False
+            allow_redo = False
             
         
         ## affiche cartes_dico
@@ -146,6 +129,9 @@ def napoleon(type_cartes, taille_jeu):
         ## affiche contour emplacement dest
         if select_dest:
             fenetre.blit(select2, (coord_dest[0] * 80 + 30 , coord_dest[1] * 118 + 30)) ## select transparence
+
+        ## affiche les boutons a droite
+        selection = fonctions_generales.barre_laterale(fenetre, fenetreX, (mouseX,mouseY))
 
         pygame.display.flip()
 
