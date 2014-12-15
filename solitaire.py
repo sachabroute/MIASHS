@@ -166,7 +166,7 @@ def record_list(liste) :
 
 def blitimages (fenetre, game, nombre_paquets, last_column, type_cartes, type_dos) :
 
-    dos = pygame.image.load("images/" + type_cartes + "/dos/" + type_dos + ".png")
+    dos = pygame.image.load("images/classic/dos/" + type_dos + ".png")
     vide = pygame.image.load("images/carte_vide/V00.png")
     dico_images = images("images/" + type_cartes + "/cartes/")
         
@@ -215,7 +215,7 @@ def blitimages (fenetre, game, nombre_paquets, last_column, type_cartes, type_do
 ############################################################################################
 ############################################################################################
 
-def main() :
+def solitaire() :
     pygame.init()
     pygame.display.set_caption("MIASHS")
 
@@ -298,7 +298,7 @@ def main() :
                 if selection == "options" :
                     type_cartes, restart = options.options(fenetre, type_cartes, nombre_cartes*4, False)
                     if restart == True :
-                        main()
+                        solitaire()
                 if selection == "retour" :
                     if not save == [] :
                         game = record_list(save)
@@ -455,11 +455,5 @@ def main() :
             except :
                 pass
                            
-            pygame.display.flip()
-
-if __name__ == '__main__':
-  main()            
-
-    
-            
+            pygame.display.flip()      
 

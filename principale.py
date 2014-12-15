@@ -67,7 +67,7 @@ def main() :
                 
                 if 100 < mouseX < 500+(150*(1-((mouseY-130)/225))) and 130 < mouseY < 355 :
                     print("klondike")
-                    solitaire.main()
+                    solitaire.solitaire()
                 elif 500+(200*(1-((mouseY-130)/225))) < mouseX < 1100 and 130 < mouseY < 355 :
                     print("napoleon")
                     napoleon.napoleon(type_cartes, taille_jeu)
