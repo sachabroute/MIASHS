@@ -62,7 +62,7 @@ def golf(type_cartes, taille_jeu):
     allow_redo = False ## permet de limiter le nombre de 'redo's de l'utilisateur a une fois
     redo = False ## si l'utilisateur veux revenir en arriere d'un mouvement
     last_move = '' ## prends les valeurs 'pioche' ou 'tableau' pour indiquer le dernier type de mouvement de l'utilisateur
-    regles_jeu = [regles, "start", "both+", "any", "hello"] ## a etre utilise pour la fonction check_move
+    regles_jeu = [regles, "start", "both+", "any", "hello", "golf"] ## a etre utilise pour la fonction check_move
 
     while True:
         mouseX, mouseY = pygame.mouse.get_pos()

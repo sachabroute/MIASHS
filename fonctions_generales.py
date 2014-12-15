@@ -140,7 +140,7 @@ def check_move(carte_depart, carte_compare, regles) :
         valid = True
 
     ## pour le napoleon si il y a >= 2 emplacements vides cote a cote
-    if carte_compare == "V00.png" and num_carte_depart != ordre_selon_regles[0]:
+    if carte_compare == "V00.png" and num_carte_depart != ordre_selon_regles[0] and regles[5] == "napoleon":
         valid = True
 
     if num_carte_depart == ordre_selon_regles[0] and regles[4] == 0:

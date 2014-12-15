@@ -66,7 +66,7 @@ def napoleon(type_cartes, taille_jeu):
     game_started = False ## devient true quand l'utilisateur commence a jouer! (utilise pour les options)
     allow_redo = False ## permet de limiter le nombre de 'redo's de l'utilisateur a une fois
     redo = False ## si l'utilisateur veux revenir en arriere d'un mouvement
-    regles_jeu = [regles, "start", "sup", "same_symbol", "ace on empty"]
+    regles_jeu = [regles, "start", "sup", "same_symbol", "ace on empty", "napoleon"]
 
     while True:
         mouseX, mouseY = pygame.mouse.get_pos()
