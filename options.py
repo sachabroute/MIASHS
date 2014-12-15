@@ -9,11 +9,11 @@ from random import *
 def main():
     pygame.init()
     fenetre = pygame.display.set_mode((1200,675))
-    options(fenetre, 'simpsons', 52, True)
+    options(fenetre, 'simpsons', 52, 1, True)
     pygame.quit()
     sys.exit()
 
-def options(fenetre, type_cartes, taille_jeu, all_options):
+def options(fenetre, type_cartes, taille_jeu, nombre_paquets, all_options):
 
     fenetreX, fenetreY = fenetre.get_size()
     
@@ -29,9 +29,7 @@ def options(fenetre, type_cartes, taille_jeu, all_options):
     restart = False
     
     ## cache le jeu en cours, on le blit ici pour pas qu'il se blit plein de fois
-    if all_options:
-        fenetre.blit(dico_images["full_fond.png"], (0,0))
-    else:
+    if not all_options:
         fenetre.blit(dico_images["blur.png"], (0,0))
 
     while True:
@@ -50,7 +48,7 @@ def options(fenetre, type_cartes, taille_jeu, all_options):
                 elif 350 <= mouseX <= 650 and 170 <= mouseY <= 390:
                     if type_cartes != "pokemon":
                         type_cartes = "pokemon"
-                elif 200 <= mouseX <= 500 and 420 <= mouseY <= 740:
+                elif 50 <= mouseX <= 350 and 420 <= mouseY <= 740:
                     if type_cartes != "classic":
                         type_cartes = "classic"
                 ## pour le bouton restart
@@ -62,11 +60,11 @@ def options(fenetre, type_cartes, taille_jeu, all_options):
                 ## pour la fleche retour au jeu
                 elif 730 <= mouseX <= 760 and 40 <= mouseY <= 70:
                     if all_options:
-                        return(type_cartes, taille_jeu)
+                        return(type_cartes, taille_jeu, nombre_paquets)
                     else:
                         return(type_cartes, restart)
 
-                ##si all_options, pour la taille du jeu
+                ## si all_options, pour la taille du jeu
                 elif all_options and 800 <= mouseX <= 900 and 180 <= mouseY <= 330:
                     taille_jeu = 28
                 elif all_options and 1000 <= mouseX <= 1100 and 180 <= mouseY <= 330:
@@ -77,6 +75,20 @@ def options(fenetre, type_cartes, taille_jeu, all_options):
                     taille_jeu = 56
                 elif all_options and 1000 <= mouseX <= 1100 and 490 <= mouseY <= 640:
                     taille_jeu = 64
+
+                ## pour le nombre de paquets
+                elif 430 <= mouseX <= 480 and 510 <= mouseY <= 560:
+                    nombre_paquets = 1
+                elif 540 <= mouseX <= 590 and 510 <= mouseY <= 560:
+                    nombre_paquets = 2
+                elif 430 <= mouseX <= 480 and 575 <= mouseY <= 625:
+                    nombre_paquets = 3
+                elif 540 <= mouseX <= 590 and 575 <= mouseY <= 625:
+                    nombre_paquets = 4
+
+        ## affiche fond
+        if all_options:
+            fenetre.blit(dico_images["full_fond.png"], (0,0))
 
 
         ## affiche le text
@@ -109,11 +121,11 @@ def options(fenetre, type_cartes, taille_jeu, all_options):
 
         ## affiche les classic
         if type_cartes == "classic":
-            fenetre.blit(dico_images["options_classic_color.png"], (200, 420))
+            fenetre.blit(dico_images["options_classic_color.png"], (50, 420))
         else:
-            fenetre.blit(dico_images["options_classic_gray.png"], (200, 420))
-        if 200 <= mouseX <= 500 and 420 <= mouseY <= 740:
-            fenetre.blit(dico_images["options_classic_color.png"], (200, 420))
+            fenetre.blit(dico_images["options_classic_gray.png"], (50, 420))
+        if 50 <= mouseX <= 350 and 420 <= mouseY <= 740:
+            fenetre.blit(dico_images["options_classic_color.png"], (50, 420))
 
     ## si all_options, affiche les paquets de cartes
         if all_options:
@@ -152,7 +164,7 @@ def options(fenetre, type_cartes, taille_jeu, all_options):
                 fenetre.blit(dico_images["52_gray.png"],(900, 335))
                 fenetre.blit(dico_images["56_gray.png"],(800, 490))
                 fenetre.blit(dico_images["64_color.png"],(1000, 490))
-
+            ##affiche si la souris est dessus
             if 800 <= mouseX <= 900 and 180 <= mouseY <= 330:
                 fenetre.blit(dico_images["28_color.png"],(800, 180))
             elif 1000 <= mouseX <= 1100 and 180 <= mouseY <= 330:
@@ -164,6 +176,16 @@ def options(fenetre, type_cartes, taille_jeu, all_options):
             elif 1000 <= mouseX <= 1100 and 490 <= mouseY <= 640:
                 fenetre.blit(dico_images["64_color.png"],(1000, 490))
 
+            ## affiche nombre paquets
+            if nombre_paquets == 1:
+                pygame.draw.rect(fenetre, (255,255,255), (430, 510, 50, 50), 3)
+            elif nombre_paquets == 2:
+                pygame.draw.rect(fenetre, (255,255,255), (540, 510, 50, 50), 3)
+            elif nombre_paquets == 3:
+                pygame.draw.rect(fenetre, (255,255,255), (430, 575, 50, 50), 3)
+            elif nombre_paquets == 4:
+                pygame.draw.rect(fenetre, (255,255,255), (540, 575, 50, 50), 3)
+
         ## affiche le bouton restart si all_options == False
         if not all_options:
             if not restart:
@@ -171,7 +193,10 @@ def options(fenetre, type_cartes, taille_jeu, all_options):
             elif restart:
                 fenetre.blit(dico_images["restart_on.png"], (650, 550))
             if not restart and 650 <= mouseX <= 775 and 550 <= mouseY <= 675:
-                fenetre.blit(dico_images["restart_hover.png"], (650, 550))                
+                fenetre.blit(dico_images["restart_hover.png"], (650, 550))
+
+
+
             
             
 
