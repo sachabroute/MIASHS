@@ -8,7 +8,13 @@ from random import *
 from fonctions_generales import *
 import principale
 
+############################################################################################
+############################################################################################
+############################################################################################
+
 def random_jeu_sol(cartes_alea, nombre_paquets) :
+    ##Crée le plateau de jeu, en fonction des cartes aléatoires
+    ##et du nombre de paquets.
     nombre_cartes = len(cartes_alea)
 
     i = 0
@@ -16,9 +22,14 @@ def random_jeu_sol(cartes_alea, nombre_paquets) :
 
     card = []
     line = []
-    game = []
+    game = [] ##Variable de sortie
 
-    while j < int(len(cartes_alea)/2) : 
+    ##TABLEAU
+    ##On commence par créer les n colonnes du tableau principal.
+    ##La première aura 1 carte, la deuxième 2, etc. On s'arrête
+    ##lorsque la somme est supérieure à la moitié du nombre total
+    ##de cartes.
+    while j < int(len(cartes_alea)/2) :
         for k in range(j,j+i) :
             card.append(cartes_alea[k])
             card.append(0)
@@ -33,9 +44,15 @@ def random_jeu_sol(cartes_alea, nombre_paquets) :
         card = []
         line = []
 
+    ##ARRIVÉE
+    ##On ajoute ensuite les emplacements de l'arrivée, correspondant
+    ##à 4 fois le nombre de paquets.
     for i in range(nombre_paquets*4) :
         game.append([])
-        
+
+    ##PIOCHE
+    ##Enfin, on place le reste des cartes dans la pioche, et on
+    ##rajoute une dernière liste correspondant à la pioche retournée.
     while j < int(len(cartes_alea)) :
         card.append(cartes_alea[j])
         card.append(1)
@@ -47,9 +64,17 @@ def random_jeu_sol(cartes_alea, nombre_paquets) :
     
     return(game)
 
+############################################################################################
+############################################################################################
+############################################################################################
+
 def taille_fenetre(game) :
+    ##Définit la taille de la fenêtre en fonction de l'emplacement
+    ##de la dernière colonne du tableau de jeu.
     for i in range(len(game)-2) :
         for j in range(len(game[i])) :
+            ##On recherche uniquement les colonnes où au moins
+            ##une carte est retournée au début du jeu.
             if game[i][j][1] == 0 :
                 pass
             else :
@@ -57,11 +82,17 @@ def taille_fenetre(game) :
 
     return(last_column)
 
+############################################################################################
+############################################################################################
+############################################################################################
+
 def cardclick(mouse_coord, game, last_column, nombre_paquets) :
+    ##Renvoie la carte sélectionnée, sa position en pixels, sa
+    ##position dans game, et si on peut la retourner ou non.
 
     card_select = ""
     pos = []
-    cardplace = [0, 0, 0]
+    cardplace = []
     rectoverso = 0
 
     ##Sélection d'une carte du tableau
@@ -77,6 +108,8 @@ def cardclick(mouse_coord, game, last_column, nombre_paquets) :
                 if game[i][-1][1] == 0 :
                     rectoverso = 1
                     cardplace = [i, j, 0]
+            ##S'il n'y a aucune carte dans la colonne, alors on renvoie
+            ##une carte vide.
             if len(game[i]) == 0 :
                 card_select = "V00.png"
                 cardplace = [i, 0, 0]
@@ -104,7 +137,12 @@ def cardclick(mouse_coord, game, last_column, nombre_paquets) :
 
     return(card_select, pos, cardplace, rectoverso)
 
+############################################################################################
+############################################################################################
+############################################################################################
+
 def record_list(liste) :
+    ##Permet d'enregistrer le plateau de jeu au tour précédent.
 
     prov1 = []
     prov2 = []
@@ -121,121 +159,150 @@ def record_list(liste) :
 
     return(prov1)
     
-    
+############################################################################################
+############################################################################################
+############################################################################################
+
+def blitimages (fenetre, game, nombre_paquets, last_column, type_cartes, type_dos) :
+
+    dos = pygame.image.load("images/" + type_cartes + "/dos/" + type_dos + ".png")
+    vide = pygame.image.load("images/carte_vide/V00.png")
+    dico_images = images("images/" + type_cartes + "/cartes/")
+        
+    ##Affichage des cartes du jeu
+    ##Affichage des cartes du tableau
+    for i in range(len(game)-(2+nombre_paquets*4)) :        
+        
+        ##Affichage d'une carte vide s'il n'y a plus de carte
+        if game[i] == [] :
+            fenetre.blit(vide, (i*85+400,213))
+                
+        for j in range(len(game[i])) :                    
+            ##Affichage du dos des cartes si elles sont verso
+            if game[i][j][1] == 0 :
+                fenetre.blit(dos, (i*85+400,j*25+213))
+
+            ##Affichage de la carte si elles sont recto
+            else :
+                fenetre.blit(dico_images[game[i][j][0]], (i*85+400,j*25+213))          
+
+    ##Affichage des cartes de l'arrivée
+    ##Affichage des cartes vides
+    for i in range(nombre_paquets*4) :
+        fenetre.blit(vide, (last_column-(85*i),50))
+        
+    ##Affichage des cartes rangées
+    for i in range(nombre_paquets*4) :
+        for j in range(len(game[-3-i])) :
+            fenetre.blit(dico_images[game[-3-i][j][0]], (last_column-i*85,50))
+            
+    ##On affiche la dernière carte de la pioche retournée
+    try :
+        fenetre.blit(dico_images[game[-1][-1][0]], (135,50))
+        
+    ##Sinon on affiche une carte vide
+    except :
+        fenetre.blit(vide, (135,50))
+
+    ##Affichage d'une carte vide s'il n'y a plus de cartes dans la pioche
+    if game[-2] == [] :
+        fenetre.blit(vide, (50,50))
+    else :
+        fenetre.blit(dos, (50,50))
+
+############################################################################################
+############################################################################################
+############################################################################################
+
 def main() :
     pygame.init()
     pygame.display.set_caption("MIASHS")
+
+    ##Chargement des images
     fond = pygame.image.load("images/fond/fond.png")
-    dos = pygame.image.load("images/classic/dos/dos6.png")
-    vide = pygame.image.load("images/carte_vide/V00.png")
-    image_select1 = pygame.image.load("images/select.png")
+    image_select1 = pygame.image.load("images/select.png") 
     image_select2 = pygame.image.load("images/select2.png")
     image_select_top = pygame.image.load("images/select_top.png")
+
+    ##Définition du jeu
     nombre_cartes = 13
     nombre_paquets = 1
+
+    ##Règles d'empilement dans le tableau
     regles_jeu = [nombre_cartes, "start", "inf", "diff_color", "king"]
+
+    ##Règles d'empilement dans l'arrivée
     regles_empile = [nombre_cartes, "start", "sup", "same_symbol", "ace"]
-    
-    cartes_alea = generation_jeu_aleatoire("images/classic/cartes/", nombre_cartes, nombre_paquets)
+
+    ##Répertoire des cartes par défaut
+    type_cartes = "classic"
+    type_dos = "dos6"
+
+    ##Génération d'un jeu aléatoire
+    cartes_alea = generation_jeu_aleatoire("images/" + type_cartes + "/cartes/", nombre_cartes, nombre_paquets)
+
+    ##Génération du plateau de jeu
     game = random_jeu_sol(cartes_alea, nombre_paquets)
 
-    dico_images = images("images/classic/cartes/")
+    ##Création du dictionnaire d'images
+    dico_images = images("images/" + type_cartes + "/cartes/")
+
+    ##Création de la feneêtre de jeu
     last_column = taille_fenetre(game)
     fenetreX, fenetreY = last_column+150, 750
     fenetre = pygame.display.set_mode((fenetreX, fenetreY))
     fond = pygame.transform.scale(fond, (fenetreX, fenetreY))
     fenetre.blit(fond, (0,0))
 
-    card_select1 = ""
-    card_select2 = ""
-    rectoverso = 0
-    tomove = []
-    cardplace1 = []
-    cardplace2 = []
-    mouse_coord = pygame.mouse.get_pos()
-    selection = ""
-    save = []
+    ##Création des variables de jeu
+    card_select1 = "" ##Carte sélectionnée
+    card_select2 = "" ##Carte comparée
+    rectoverso = 0 ##Définit si l'on peut retourner une carte ou non
+    tomove = []  ##Définit l'ensemble des cartes à déplacer
+    cardplace1 = [] ##Définit l'emplacement dans game de la carte 1
+    cardplace2 = [] ##Définit l'emplacement dans game de la carte 2
+    selection = "" ##Définit l'icône sélectionnée dans la barre latérale
+    save = [] ##Enregistrement du plateau de jeu au tour précédent
 
+    ##Boucle de jeu
     while True:        
         for event in pygame.event.get():
 
-            selection = barre_laterale(fenetre, fenetreX, mouse_coord)
-            dico_images = images("images/classic/cartes/")
-            verify_if_win = []
+            ##Récupération des coordonnées de la souris
+            mouse_coord = pygame.mouse.get_pos()
+
+            ##Affichage du fond
+            fenetre.blit(fond,(0,0))
+            
+            ##Affichage du plateau de jeu
+            blitimages (fenetre, game, nombre_paquets, last_column, type_cartes, type_dos)
 
             ##Évènement de fermeture
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                 pygame.quit()
                 sys.exit()
 
-            ##Affichage du fond
-                fenetre.blit(fond,(0,0))
-                
-            ##Affichage des cartes du jeu
-            ##Affichage des cartes du tableau
-            for i in range(len(game)-(2+nombre_paquets*4)) :        
-                
-                ##Affichage d'une carte vide s'il n'y a plus de carte
-                if game[i] == [] :
-                    fenetre.blit(vide, (i*85+400,213))
-                        
-                for j in range(len(game[i])) :                    
-                    ##Affichage du dos des cartes si elles sont verso
-                    if game[i][j][1] == 0 :
-                        fenetre.blit(dos, (i*85+400,j*25+213))
-
-                    ##Affichage de la carte si elles sont recto
-                    else :
-                        fenetre.blit(dico_images[game[i][j][0]], (i*85+400,j*25+213))          
-
-            ##Affichage des cartes de l'arrivée
-            ##Affichage des cartes vides
-            for i in range(nombre_paquets*4) :
-                fenetre.blit(vide, (last_column-(85*i),50))
-                
-            ##Affichage des cartes rangées
-            for i in range(nombre_paquets*4) :
-                for j in range(len(game[-3-i])) :
-                    fenetre.blit(dico_images[game[-3-i][j][0]], (last_column-i*85,50))
-                    
-            ##On affiche la dernière carte de la pioche retournée
-            try :
-                fenetre.blit(dico_images[game[-1][-1][0]], (135,50))
-                
-            ##Sinon on affiche une carte vide
-            except :
-                fenetre.blit(vide, (135,50))
-
-            if game[-2] == [] :
-                fenetre.blit(vide, (50,50))
-            else :
-                fenetre.blit(dos, (50,50))
-
+            ##Affichage de la barre latérale
+            selection = barre_laterale(fenetre, fenetreX, mouse_coord)
+            
+            ##Actualisation de la barre latérale
             if event.type == MOUSEMOTION :
                 mouse_coord = pygame.mouse.get_pos()
                 selection = barre_laterale(fenetre, fenetreX, mouse_coord)
             
             ##Gestion des clics
             if event.type == MOUSEBUTTONDOWN and event.button == 1 :
-
-                pos = []
-                mouse_coord = pygame.mouse.get_pos()
-                
                 if selection == "menu" :
                     principale.main()
                 if selection == "options" :
                     print("options")
                 if selection == "retour" :
                     if not save == [] :
-                        try :
-                            game = record_list(save)
-                            save = []
-                        except :
-                            pass
+                        game = record_list(save)
+                        save = []
                     
-                ##Clic dans la pioche                
+                ##Clic dans la pioche retournée                
                 if 50 < mouse_coord[0] < 125 and 50 < mouse_coord[1] < 163 :
-                    
                     save = record_list(game)
                     
                     ##Gestion des paquets
@@ -250,29 +317,22 @@ def main() :
                         game[-2] = game[-1]
                         game[-1] = []
 
-                    
                     card_select1 = ""
                     pos1 = []
                     cardplace1 = []
-
-                    ##Affichage d'une carte vide si la pioche cachée est vide
-                    if game[-2] == [] :
-                        fenetre.blit(vide, (50,50))
-
-                    ##Affichage d'un dos s'il reste encore des cartes
-                    else :
-                        fenetre.blit(dos, (50,50))
-
-
-                    
+             
                 ##Si aucune carte n'est sélectionnée                
                 if card_select1 == "" :
 
                     ##Alors on peut sélectionner une carte
                     try :
                         card_select1, pos1, cardplace1, rectoverso = cardclick(mouse_coord, game, last_column, nombre_paquets)
+                        ##On retourne la carte si c'est possible
                         if rectoverso == 1 :
                             game[cardplace1[0]][cardplace1[1]][1] = 1
+                            card_select1 = ""
+                            pos1 = []
+                            cardplace1 = []
                             
                     except :
                         card_select1 = ""
@@ -285,19 +345,23 @@ def main() :
 
                     ##On sélectionne une deuxième carte
                     card_select2, pos2, cardplace2, rectoverso = cardclick(mouse_coord, game, last_column, nombre_paquets)
+
+                    ##On retourne la carte si c'est possible
                     if rectoverso == 1 :
-                        game[cardplace2[0]][cardplace2[1]][1] = 1
-                    if len(game)-3-nombre_paquets*4 < cardplace2[0] < len(game)-2 :
-                        try :
-                            valid = check_move(card_select1, card_select2, regles_empile)
-                        except :
-                            pass
-                    else :
-                        try :
-                            valid = check_move(card_select1, card_select2, regles_jeu)
+                        try : 
+                            game[cardplace2[0]][cardplace2[1]][1] = 1
                         except :
                             pass
 
+                    try :
+                        if len(game)-3-nombre_paquets*4 < cardplace2[0] < len(game)-2 :
+                            valid = check_move(card_select1, card_select2, regles_empile)
+                        else :
+                            valid = check_move(card_select1, card_select2, regles_jeu)
+                    except :
+                        pass
+
+                    ##Désélection de la carte si on clique dessus à nouveau
                     if card_select1 == card_select2 :
                         card_select1 = ""
                         card_select2 = ""
@@ -306,60 +370,61 @@ def main() :
                         cardplace1 = []
                         cardplace2 = []
 
-                    ##Si oui, le mouvement est validé
-                    if not card_select1 == "" and not card_select2 == "" :
-                        
-                        if valid == True and cardplace2[0] < len(game)-2 :
-                            save = record_list(game)
-                            tomove = game[cardplace1[0]][cardplace1[1]:]
-                            tomove.reverse()
-                            for i in range(len(tomove)) :
-                                game[cardplace2[0]].append(tomove[-1])
-                                tomove.pop()
-                                game[cardplace1[0]].pop()
-                            valid = False
-                            card_select1 = ""
-                            cardplace1 = []
-                            pos1 = []
+            ##Gestion du clic droit
+            if event.type == MOUSEBUTTONDOWN and event.button == 3 :
 
-                        ##Sinon, la deuxième carte devient la carte sélectionnée
-                        else :
-                            card_select1 = card_select2
-                            pos1 = pos2
-                            cardplace1 = cardplace2
-                            
-                        card_select2 = ""
-                        pos2 = []
-                        cardplace2 = []
-                        
-                ##Si la carte sélectionnée est une carte vide (dans l'arrivée), alors on ne sélectionne rien
-                if card_select1 == "V00.png" :
+                ##Sélection d'une carte
+                try :
+                    card_select1, pos1, cardplace1, rectoverso = cardclick(mouse_coord, game, last_column, nombre_paquets)
+                except :
                     card_select1 = ""
                     pos1 = []
                     cardplace1 = []
+
+                ##Vérification si un emplacement est disponible dans l'arrivée
+                for i in range(nombre_paquets*4) :
+                    try :
+                        card_select2 = game[len(game)-2-nombre_paquets*4+i][-1][0]
+                    except :
+                        card_select2 = "V00.png"
+                    cardplace2 = [len(game)-2-nombre_paquets*4+i, -1, 0]
+                    valid = check_move(card_select1, card_select2, regles_empile)
+                    print(card_select1, card_select2)
+                    if valid == True :
+                        break
+
+            ##Vérification de la validité du mouvement
+            if not card_select1 == "" and not card_select2 == "" :
+                        
+                if valid == True and cardplace2[0] < len(game)-2 :
+                    save = record_list(game)
+                    tomove = game[cardplace1[0]][cardplace1[1]:]
+                    tomove.reverse()
+                    for i in range(len(tomove)) :
+                        game[cardplace2[0]].append(tomove[-1])
+                        tomove.pop()
+                        game[cardplace1[0]].pop()
+                    card_select1 = ""
+                    cardplace1 = []
+                    pos1 = []
+                    valid = False
+
+                ##Sinon, la deuxième carte devient la carte sélectionnée
+                else :
+                    card_select1 = card_select2
+                    pos1 = pos2
+                    cardplace1 = cardplace2
                     
-            if event.type == KEYDOWN and event.key == K_q :
-                print("Carte 1 :", card_select1, "/", cardplace1)
-                print("Carte 2 :", card_select2, "/", cardplace2)
-            if event.type == KEYDOWN and event.key == K_g :
-                print("Tableau, ligne 1 :", game[0])
-                print("Tableau, ligne 2 :", game[1])
-                print("Tableau, ligne 3 :", game[2])
-                print("Tableau, ligne 4 :", game[3])
-                print("Tableau, ligne 5 :", game[4])
-                print("Tableau, ligne 6 :", game[5])
-                print("Tableau, ligne 7 :", game[6])
-                print("/n")
-                print("Tableau, arrivée 1 :", game[7])
-                print("Tableau, arrivée 1 :", game[8])
-                print("Tableau, arrivée 1 :", game[9])
-                print("Tableau, arrivée 1 :", game[10])
-                print("/n")
-                print("Pioche couverte :", game[11])
-                print("Pioche retournée :", game[12])
-            if event.type == KEYDOWN and event.key == K_h :
-                print("hello")
-                
+                card_select2 = ""
+                pos2 = []
+                cardplace2 = []
+                        
+            ##Si la carte sélectionnée est une carte vide (dans l'arrivée), alors on ne sélectionne rien
+            if card_select1 == "V00.png" :
+                card_select1 = ""
+                pos1 = []
+                cardplace1 = []
+                          
             ##Affichage des contours de sélection
             try :
                 if cardplace1[1] == len(game[cardplace1[0]])-1 or cardplace[0] == len(game)-2 :
@@ -373,17 +438,18 @@ def main() :
             except :
                 pass
 
+            ##Vérification de la fin de jeu
             try :
+                win = 1
                 for i in range(nombre_paquets*4) :
-                    verify_if_win.append(int(game[len(game)-2-nombre_paquets*4+i][-1][0][1:3]))
-                if sum(verify_if_win) == 52*nombre_paquets :
+                    if not int(game[len(game)-2-nombre_paquets*4+i][-1][0][1:3]) == 13 :
+                        win = 0
+                if win == 1 :
                     print("Vous avez gagné !")
             except :
                 pass
                            
             pygame.display.flip()
-
-            fenetre.blit(fond,(0,0))
 
 if __name__ == '__main__':
   main()            
