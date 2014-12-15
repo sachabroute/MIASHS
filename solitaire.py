@@ -4,6 +4,7 @@ from pygame.locals import *
 import sys
 import os
 import time
+import options
 from random import *
 from fonctions_generales import *
 import principale
@@ -229,10 +230,10 @@ def main() :
     nombre_paquets = 1
 
     ##Règles d'empilement dans le tableau
-    regles_jeu = [nombre_cartes, "start", "inf", "diff_color", "king"]
+    regles_jeu = [nombre_cartes, "start", "inf", "diff_color", "king", "solitaire"]
 
     ##Règles d'empilement dans l'arrivée
-    regles_empile = [nombre_cartes, "start", "sup", "same_symbol", "ace"]
+    regles_empile = [nombre_cartes, "start", "sup", "same_symbol", "ace", "solitaire"]
 
     ##Répertoire des cartes par défaut
     type_cartes = "classic"
@@ -295,7 +296,9 @@ def main() :
                 if selection == "menu" :
                     principale.main()
                 if selection == "options" :
-                    print("options")
+                    type_cartes, restart = options.options(fenetre, type_cartes, nombre_cartes*4, False)
+                    if restart == True :
+                        main()
                 if selection == "retour" :
                     if not save == [] :
                         game = record_list(save)
@@ -388,8 +391,11 @@ def main() :
                     except :
                         card_select2 = "V00.png"
                     cardplace2 = [len(game)-2-nombre_paquets*4+i, -1, 0]
-                    valid = check_move(card_select1, card_select2, regles_empile)
-                    print(card_select1, card_select2)
+                    pos2 = []
+                    try :
+                        valid = check_move(card_select1, card_select2, regles_empile)
+                    except :
+                        pass
                     if valid == True :
                         break
 
