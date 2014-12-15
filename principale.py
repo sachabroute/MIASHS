@@ -46,6 +46,7 @@ def main() :
     ## valeurs par default
     type_cartes = 'simpsons'
     taille_jeu = 52
+    nombre_paquets = 1
 
     all_options = True
 
@@ -67,7 +68,7 @@ def main() :
                 
                 if 100 < mouseX < 500+(150*(1-((mouseY-130)/225))) and 130 < mouseY < 355 :
                     print("klondike")
-                    solitaire.solitaire()
+                    solitaire.solitaire(type_cartes, taille_jeu, nombre_paquets)
                 elif 500+(200*(1-((mouseY-130)/225))) < mouseX < 1100 and 130 < mouseY < 355 :
                     print("napoleon")
                     napoleon.napoleon(type_cartes, taille_jeu)

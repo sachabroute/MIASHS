@@ -215,7 +215,7 @@ def blitimages (fenetre, game, nombre_paquets, last_column, type_cartes, type_do
 ############################################################################################
 ############################################################################################
 
-def solitaire() :
+def solitaire(type_cartes, taille_jeu, nombre_paquets) :
     pygame.init()
     pygame.display.set_caption("MIASHS")
 
@@ -226,8 +226,7 @@ def solitaire() :
     image_select_top = pygame.image.load("images/select_top.png")
 
     ##Définition du jeu
-    nombre_cartes = 13
-    nombre_paquets = 1
+    nombre_cartes = int(taille_jeu/4)
 
     ##Règles d'empilement dans le tableau
     regles_jeu = [nombre_cartes, "start", "inf", "diff_color", "king", "solitaire"]
