@@ -29,7 +29,10 @@ def options(fenetre, type_cartes, taille_jeu, all_options):
     restart = False
     
     ## cache le jeu en cours, on le blit ici pour pas qu'il se blit plein de fois
-    fenetre.blit(dico_images["blur.png"], (0,0))
+    if all_options:
+        fenetre.blit(dico_images["full_fond.png"], (0,0))
+    else:
+        fenetre.blit(dico_images["blur.png"], (0,0))
 
     while True:
 

@@ -7,6 +7,7 @@ import napoleon
 import golf
 import solitaire
 from fonctions_generales import *
+import options_test as options
 
 def credit(fenetre) :
 
@@ -42,6 +43,12 @@ def main() :
 
     fond = pygame.image.load("images/fond/fond.png").convert()
 
+    ## valeurs par default
+    type_cartes = 'simpsons'
+    taille_jeu = 52
+
+    all_options = True
+
     while True:
         for event in pygame.event.get():
             mouseX, mouseY = pygame.mouse.get_pos()
@@ -69,6 +76,7 @@ def main() :
                     golf.main()
                 elif 500+(200*(1-((mouseY-405)/225))) < mouseX < 1100 and 405 < mouseY < 466 :
                     print("options")
+                    options.options(fenetre, type_cartes, taille_jeu, all_options)
                 elif 500+(200*(1-((mouseY-405)/225))) < mouseX < 1100 and 487 < mouseY < 548 :
                     print("credits")
                     credit(fenetre)
