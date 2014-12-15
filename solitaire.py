@@ -295,7 +295,7 @@ def solitaire(type_cartes, taille_jeu, nombre_paquets) :
                 if selection == "menu" :
                     principale.main()
                 if selection == "options" :
-                    type_cartes, restart = options.options(fenetre, type_cartes, nombre_cartes*4, False)
+                    type_cartes, restart = options.options(fenetre, type_cartes, nombre_cartes*4, nombre_paquets, False)
                     if restart == True :
                         solitaire()
                 if selection == "retour" :
