@@ -17,12 +17,12 @@ def options(fenetre, type_cartes, taille_jeu, nombre_paquets, all_options):
 
     fenetreX, fenetreY = fenetre.get_size()
     
-    liste_images = os.listdir("images/test/")
+    liste_images = os.listdir("images/menu_option/")
 
     dico_images = {}
 
     for element in liste_images:
-        dico_images[element] = pygame.image.load("images/test/"+element).convert_alpha()
+        dico_images[element] = pygame.image.load("images/menu_option/"+element).convert_alpha()
 
     dico_images["blur.png"] = pygame.transform.scale(dico_images["blur.png"], (fenetreX, fenetreY))
     
@@ -178,13 +178,13 @@ def options(fenetre, type_cartes, taille_jeu, nombre_paquets, all_options):
 
             ## pour le nombre de paquets
             elif 430 <= mouseX <= 480 and 510 <= mouseY <= 560:
-                pygame.draw.rect(fenetre, (255,255,255), (430, 510, 50, 50), 0)
+                pygame.draw.rect(fenetre, (150,150,150), (430, 510, 50, 50), 3)
             elif 540 <= mouseX <= 590 and 510 <= mouseY <= 560:
-                pygame.draw.rect(fenetre, (255,255,255), (540, 510, 50, 50), 0)
+                pygame.draw.rect(fenetre, (150,150,150), (540, 510, 50, 50), 3)
             elif 430 <= mouseX <= 480 and 575 <= mouseY <= 625:
-                pygame.draw.rect(fenetre, (255,255,255), (430, 575, 50, 50), 0)
+                pygame.draw.rect(fenetre, (150,150,150), (430, 575, 50, 50), 3)
             elif 540 <= mouseX <= 590 and 575 <= mouseY <= 625:
-                pygame.draw.rect(fenetre, (255,255,255), (540, 575, 50, 50), 0)
+                pygame.draw.rect(fenetre, (150,150,150), (540, 575, 50, 50), 3)
 
 
             ## affiche nombre paquets
