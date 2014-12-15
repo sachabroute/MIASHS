@@ -4,7 +4,7 @@ import sys
 import os
 import time
 from random import *
-import options_test as game_options
+import options
 import fonctions_generales
 import principale
 
@@ -63,6 +63,7 @@ def golf(type_cartes, taille_jeu):
     redo = False ## si l'utilisateur veux revenir en arriere d'un mouvement
     last_move = '' ## prends les valeurs 'pioche' ou 'tableau' pour indiquer le dernier type de mouvement de l'utilisateur
     regles_jeu = [regles, "start", "both+", "any", "hello", "golf"] ## a etre utilise pour la fonction check_move
+    all_options = False
 
     while True:
         mouseX, mouseY = pygame.mouse.get_pos()
@@ -88,7 +89,7 @@ def golf(type_cartes, taille_jeu):
                 elif selection == "menu":
                     principale.main()
                 elif selection == "options":
-                    type_cartes, restart = game_options.options(fenetre, type_cartes)
+                    type_cartes, restart = options.options(fenetre, type_cartes, taille_jeu, all_options)
                     if restart:
                         golf(type_cartes, taille_jeu)
                     repertoire_cartes = "images/" + type_cartes + "/cartes/"

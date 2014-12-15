@@ -4,7 +4,7 @@ import sys
 import os
 import time
 from random import *
-import options_test as game_options
+import options
 import fonctions_generales
 import principale
 
@@ -67,6 +67,7 @@ def napoleon(type_cartes, taille_jeu):
     allow_redo = False ## permet de limiter le nombre de 'redo's de l'utilisateur a une fois
     redo = False ## si l'utilisateur veux revenir en arriere d'un mouvement
     regles_jeu = [regles, "start", "sup", "same_symbol", "ace on empty", "napoleon"]
+    all_options = False
 
     while True:
         mouseX, mouseY = pygame.mouse.get_pos()
@@ -91,7 +92,7 @@ def napoleon(type_cartes, taille_jeu):
                 elif selection == "menu":
                     principale.main()
                 elif selection == "options":
-                    type_cartes, restart = game_options.options(fenetre, type_cartes)
+                    type_cartes, restart = options.options(fenetre, type_cartes, taille_jeu, all_options)
                     if restart:
                         napoleon(type_cartes, taille_jeu)
                     repertoire_cartes = "images/" + type_cartes + "/cartes/"

@@ -70,13 +70,13 @@ def main() :
                     solitaire.main()
                 elif 500+(200*(1-((mouseY-130)/225))) < mouseX < 1100 and 130 < mouseY < 355 :
                     print("napoleon")
-                    napoleon.main()
+                    napoleon.napoleon(type_cartes, taille_jeu)
                 elif 100 < mouseX < 500+(150*(1-((mouseY-405)/225))) and 405 < mouseY < 630 :
                     print("golf")
-                    golf.main()
+                    golf.golf(type_cartes, taille_jeu)
                 elif 500+(200*(1-((mouseY-405)/225))) < mouseX < 1100 and 405 < mouseY < 466 :
                     print("options")
-                    options.options(fenetre, type_cartes, taille_jeu, all_options)
+                    type_cartes, taille_jeu = options.options(fenetre, type_cartes, taille_jeu, all_options)
                 elif 500+(200*(1-((mouseY-405)/225))) < mouseX < 1100 and 487 < mouseY < 548 :
                     print("credits")
                     credit(fenetre)
