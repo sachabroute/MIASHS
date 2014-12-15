@@ -176,6 +176,17 @@ def options(fenetre, type_cartes, taille_jeu, nombre_paquets, all_options):
             elif 1000 <= mouseX <= 1100 and 490 <= mouseY <= 640:
                 fenetre.blit(dico_images["64_color.png"],(1000, 490))
 
+            ## pour le nombre de paquets
+            elif 430 <= mouseX <= 480 and 510 <= mouseY <= 560:
+                pygame.draw.rect(fenetre, (255,255,255), (430, 510, 50, 50), 0)
+            elif 540 <= mouseX <= 590 and 510 <= mouseY <= 560:
+                pygame.draw.rect(fenetre, (255,255,255), (540, 510, 50, 50), 0)
+            elif 430 <= mouseX <= 480 and 575 <= mouseY <= 625:
+                pygame.draw.rect(fenetre, (255,255,255), (430, 575, 50, 50), 0)
+            elif 540 <= mouseX <= 590 and 575 <= mouseY <= 625:
+                pygame.draw.rect(fenetre, (255,255,255), (540, 575, 50, 50), 0)
+
+
             ## affiche nombre paquets
             if nombre_paquets == 1:
                 pygame.draw.rect(fenetre, (255,255,255), (430, 510, 50, 50), 3)
@@ -185,6 +196,7 @@ def options(fenetre, type_cartes, taille_jeu, nombre_paquets, all_options):
                 pygame.draw.rect(fenetre, (255,255,255), (430, 575, 50, 50), 3)
             elif nombre_paquets == 4:
                 pygame.draw.rect(fenetre, (255,255,255), (540, 575, 50, 50), 3)
+
 
         ## affiche le bouton restart si all_options == False
         if not all_options:

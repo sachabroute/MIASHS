@@ -77,7 +77,7 @@ def main() :
                     golf.golf(type_cartes, taille_jeu)
                 elif 500+(200*(1-((mouseY-405)/225))) < mouseX < 1100 and 405 < mouseY < 466 :
                     print("options")
-                    type_cartes, taille_jeu = options.options(fenetre, type_cartes, taille_jeu, all_options)
+                    type_cartes, taille_jeu, nombre_paquets = options.options(fenetre, type_cartes, taille_jeu, nombre_paquets, all_options)
                 elif 500+(200*(1-((mouseY-405)/225))) < mouseX < 1100 and 487 < mouseY < 548 :
                     print("credits")
                     credit(fenetre)

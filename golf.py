@@ -89,7 +89,7 @@ def golf(type_cartes, taille_jeu):
                 elif selection == "menu":
                     principale.main()
                 elif selection == "options":
-                    type_cartes, restart = options.options(fenetre, type_cartes, taille_jeu, all_options)
+                    type_cartes, restart = options.options(fenetre, type_cartes, taille_jeu, 1, all_options)
                     if restart:
                         golf(type_cartes, taille_jeu)
                     repertoire_cartes = "images/" + type_cartes + "/cartes/"
