@@ -7,7 +7,7 @@ import napoleon
 import golf
 import solitaire
 from fonctions_generales import *
-import options_test as options
+import options
 
 def credit(fenetre) :
 
